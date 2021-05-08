@@ -7,7 +7,7 @@ from conf.settings import MOVIE_API
 class CreateNode:
 
     def __init__(self, uri, user, password):
-        self.driver = GraphDatabase.driver(uri, auth=(user, password))
+        self.driver = GraphDatabase.driver(uri, auth=(user, password), encrypted=False)
 
     def close(self):
         self.driver.close()
@@ -33,12 +33,12 @@ if __name__ == "__main__":
 
                 if response['results'][filme]['backdrop_path'] == None:
 
-                    greeter = CreateNode("Bolt://0.0.0.0:7687", "neo4j", "streams")
+                    greeter = CreateNode("http://127.0.0.1:7474", "neo4j", "streams")
                     greeter.print_greeting(response['results'][filme]['id'],response['results'][filme]['original_title'], response['results'][filme]['overview'], response['results'][filme]['release_date'], response['results'][filme]['vote_average'], "Image not found")
 
                 else:
 
-                    greeter = CreateNode("Bolt://0.0.0.0:7687", "neo4j", "streams")
+                    greeter = CreateNode("http://127.0.0.1:7474", "neo4j", "streams")
                     greeter.print_greeting(response['results'][filme]['id'],response['results'][filme]['original_title'], response['results'][filme]['overview'], response['results'][filme]['release_date'], response['results'][filme]['vote_average'], "https://image.tmdb.org/t/p/w500/"+response['results'][filme]['backdrop_path'])
 
                 greeter.close()
