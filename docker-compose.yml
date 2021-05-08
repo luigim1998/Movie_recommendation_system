@@ -1,48 +1,42 @@
-version: '3.7'
-
+version: '3'
 services:
-  mongo-express:
-    image: mongo-express
+  neo4j:
+    image: neo4j:4.0.3
+    hostname: neo4j
+    container_name: neo4j
     ports:
-      - 8081:8081
-    environment:
-      ME_CONFIG_BASICAUTH_USERNAME: victorrocha
-      ME_CONFIG_BASICAUTH_PASSWORD: rotciv960503
-      ME_CONFIG_MONGODB_PORT: 27017
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: 030596victor
-    links:
-      - mongo
-    networks:
-      - mongo-compose-network
-
-  mongo:
-    image: mongo
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: 030596victor
-    ports:
-      - "27017:27017"
-    networks:
-      - mongo-compose-network
-  app:
-    restart: always
-    build: app
-    environment:
-      - MONGO_USERNAME=root
-      - MONGO_PASSWORD=030596victor
-      - MONGO_HOSTNAME=mongo
-      - MONGO_PORT=27017
-      - MONGO_DB=players
-  
-    ports:
-      - "3000:3000"
-    links:
-      - mongo
-    networks:
-      - mongo-compose-network
+      - "7777:7777"
+      - "8888:8888"
     depends_on:
-      - mongo
-networks: 
-    mongo-compose-network:
-      driver: bridge
+      - kafka
+    volumes:
+      - ./neo4j/plugins:/plugins
+    environment:
+      NEO4J_AUTH: neo4j/streams
+      NEO4J_dbms_logs_debug_level: DEBUG
+      # KAFKA related configuration
+      NEO4J_kafka_bootstrap_servers: kafka:19092
+      NEO4J_streams_source_topic_nodes_neo4j: Person{*}
+      NEO4J_streams_source_topic_relationships_neo4j: KNOWS{*}
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "12181:12181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 12181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - "19092:19092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:12181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:19092
