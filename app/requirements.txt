@@ -2,4 +2,9 @@ python-dotenv==0.14.0
 python-telegram-bot==13.0
 pymongo==3.11.1
 python-twitter==3.5
+<<<<<<< HEAD
 neo4j==4.1.0
+=======
+neo4j==4.2.1
+requests==2.25.1
+>>>>>>> cbee720bb77566411a2b5dd7b02ff3f32a55d900

@@ -15,13 +15,11 @@ class CreateNode:
     def print_greeting(self, id, title, overview, release_date, vote_average, imageUrl):
         with self.driver.session() as session:
             greeting = session.write_transaction(self._create_and_return_greeting, id, title, overview, release_date, vote_average, imageUrl)
-            
 
     @staticmethod
     def _create_and_return_greeting(tx, id, title, overview, release_date, vote_average, backdrop_path):
         result = tx.run("CREATE (n:Filme {id: $id, title: $title, overview: $overview, release_date: $release_date, vote_average: $vote_average, imageUrl: $backdrop_path })", id=id, title=title, overview=overview, release_date=release_date, vote_average=vote_average, backdrop_path=backdrop_path)
         return result.single
-
 
 
 if __name__ == "__main__":
