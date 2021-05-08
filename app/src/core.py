@@ -33,12 +33,12 @@ if __name__ == "__main__":
 
                 if response['results'][filme]['backdrop_path'] == None:
 
-                    greeter = CreateNode("neo4j://localhost:7687", "neo4j", "root")
+                    greeter = CreateNode("Bolt://0.0.0.0:7687", "neo4j", "streams")
                     greeter.print_greeting(response['results'][filme]['id'],response['results'][filme]['original_title'], response['results'][filme]['overview'], response['results'][filme]['release_date'], response['results'][filme]['vote_average'], "Image not found")
 
                 else:
 
-                    greeter = CreateNode("neo4j://localhost:7687", "neo4j", "root")
+                    greeter = CreateNode("Bolt://0.0.0.0:7687", "neo4j", "streams")
                     greeter.print_greeting(response['results'][filme]['id'],response['results'][filme]['original_title'], response['results'][filme]['overview'], response['results'][filme]['release_date'], response['results'][filme]['vote_average'], "https://image.tmdb.org/t/p/w500/"+response['results'][filme]['backdrop_path'])
 
                 greeter.close()
