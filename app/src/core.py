@@ -24,7 +24,11 @@ class CreateNode:
 
 if __name__ == "__main__":
     start = time.time()
-    for page in range(1, 500+1):
+    print("esperando o tempo")
+    time.sleep(30)
+    print("depois do tempo")
+    greeter = CreateNode("bolt://127.0.0.1:7474", "neo4j", "streams")
+    for page in range(1, 5):
         res = requests.get('https://api.themoviedb.org/3/movie/popular?api_key=' + MOVIE_API+'&page='+str(page))
         response = json.loads(res.text)
         for filme in range(0,len(response['results'])):
@@ -32,17 +36,13 @@ if __name__ == "__main__":
             if ('id' in response['results'][filme]) and ('original_title' in response['results'][filme]) and ('overview' in response['results'][filme]) and ('release_date' in response['results'][filme]) and ('vote_average' in response['results'][filme]) and ('backdrop_path' in response['results'][filme]):
 
                 if response['results'][filme]['backdrop_path'] == None:
-
-                    greeter = CreateNode("http://127.0.0.1:7474", "neo4j", "streams")
                     greeter.print_greeting(response['results'][filme]['id'],response['results'][filme]['original_title'], response['results'][filme]['overview'], response['results'][filme]['release_date'], response['results'][filme]['vote_average'], "Image not found")
 
                 else:
-
-                    greeter = CreateNode("http://127.0.0.1:7474", "neo4j", "streams")
                     greeter.print_greeting(response['results'][filme]['id'],response['results'][filme]['original_title'], response['results'][filme]['overview'], response['results'][filme]['release_date'], response['results'][filme]['vote_average'], "https://image.tmdb.org/t/p/w500/"+response['results'][filme]['backdrop_path'])
 
-                greeter.close()
             else:
                 continue
     end = time.time()
     print("tempo", end - start)
+    greeter.close()
