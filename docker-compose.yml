@@ -1,35 +1,45 @@
 version: '3'
+
+networks: 
+  lan:
+
 services:
+  neo4j: 
+    image: neo4j:4.1-enterprise
+    ports:
+    - "17474:7474"
+    - "17687:7687"
+    volumes:
+      - ./plugins:/plugins
+      - ./data:/data
+      - ./import:/import
+      - ./conf:/conf
+    environment:
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_dbms_shell_enabled=true
+      - NEO4J_dbms_default__database=neo4j
+      - NEO4J_dbms_security_auth__enabled=false
+
+
+
+
+      #- NEO4JLABS_PLUGINS=["graph-data-science", "apoc"]
+      #- NEO4J_dbms_security_procedures_whitelist=gds.*, apoc.*
+      #- NEO4J_dbms_security_procedures_unrestricted=gds.*, apoc.*
   app:
     restart: always
     container_name: sistema_recomendacao
     build: app
     ports:
-      - "3040:3040"
-    links:
-      - neo4j
+      - "8080:8080"
     depends_on:
       - neo4j
-  neo4j:
-    image: neo4j:4.2.1
-    hostname: neo4j
-    container_name: neo4j
-    ports:
-      - "7474:7474"
-      - "7687:7687"
     networks:
-      - neo4j-network
-    # depends_on:
-    #   - kafka
-    volumes:
-      - ./neo4j/plugins:/plugins
-      - ./neo4j/data:/data
-    environment:
-      NEO4J_AUTH: neo4j/streams
-      NEO4J_dbms_logs_debug_level: DEBUG
-      NEO4J_dbms_connector.bolt.tls_level: OPTIONAL
-      NEO4J_dbms_ssl.policy.bolt.client_auth: NONE
-      NEO4J_dbms_ssl.policy.https.client_auth: NONE
+      - lan
+
+volumes:
+  neo4j:
   #     # KAFKA related configuration
   #     NEO4J_kafka_bootstrap_servers: kafka:19092
   #     NEO4J_streams_source_topic_nodes_neo4j: Person{*}
@@ -55,7 +65,3 @@ services:
 #       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 #       KAFKA_ZOOKEEPER_CONNECT: zookeeper:12181
 #       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:19092
-
-networks: 
-  neo4j-network:
-    driver: bridge
