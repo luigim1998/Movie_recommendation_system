@@ -24,10 +24,7 @@ class CreateNode:
 
 if __name__ == "__main__":
     start = time.time()
-    print("esperando o tempo")
-    time.sleep(30)
-    print("depois do tempo")
-    greeter = CreateNode("bolt://127.0.0.1:7474", "neo4j", "streams")
+    greeter = CreateNode("bolt://127.0.0.1:7687", "neo4j", "root")
     for page in range(1, 5):
         res = requests.get('https://api.themoviedb.org/3/movie/popular?api_key=' + MOVIE_API+'&page='+str(page))
         response = json.loads(res.text)
