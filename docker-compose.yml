@@ -1,14 +1,17 @@
 version: '3'
 
-networks: 
-  lan:
+networks:
+  neo4j_network:
+    driver: bridge
 
 services:
-  neo4j: 
+  neo4j:
     image: neo4j:4.1-enterprise
     ports:
-    - "17474:7474"
-    - "17687:7687"
+      - 7474:7474
+      - 7687:7687
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
     volumes:
       - ./plugins:/plugins
       - ./data:/data
@@ -16,30 +19,31 @@ services:
       - ./conf:/conf
     environment:
       - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
-      - NEO4J_apoc_import_file_enabled=true
-      - NEO4J_dbms_shell_enabled=true
-      - NEO4J_dbms_default__database=neo4j
-      - NEO4J_dbms_security_auth__enabled=false
-
-
-
-
+      - NEO4J_AUTH=none
+      - NEO4J_dbms_allow__upgrade=true
+      # - NEO4J_apoc_import_file_enabled=true
+      # - NEO4J_dbms_shell_enabled=true
+      # - NEO4J_dbms_default__database=neo4j
+      # - NEO4J_dbms_security_auth__enabled=false
       #- NEO4JLABS_PLUGINS=["graph-data-science", "apoc"]
       #- NEO4J_dbms_security_procedures_whitelist=gds.*, apoc.*
       #- NEO4J_dbms_security_procedures_unrestricted=gds.*, apoc.*
+    networks:
+      - neo4j_network
   app:
-    restart: always
+    restart: on-failure
     container_name: sistema_recomendacao
     build: app
     ports:
       - "8080:8080"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+    links:
+      - neo4j
     depends_on:
       - neo4j
     networks:
-      - lan
-
-volumes:
-  neo4j:
+      - neo4j_network
   #     # KAFKA related configuration
   #     NEO4J_kafka_bootstrap_servers: kafka:19092
   #     NEO4J_streams_source_topic_nodes_neo4j: Person{*}

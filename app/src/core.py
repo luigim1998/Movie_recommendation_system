@@ -1,7 +1,7 @@
 import requests
 import json
 import time
-from neo4j import GraphDatabase
+from neo4j import GraphDatabase, basic_auth
 from conf.settings import MOVIE_API
 
 class CreateNode:
@@ -21,12 +21,12 @@ class CreateNode:
         result = tx.run("CREATE (n:Filme {id: $id, title: $title, overview: $overview, release_date: $release_date, vote_average: $vote_average, imageUrl: $backdrop_path })", id=id, title=title, overview=overview, release_date=release_date, vote_average=vote_average, backdrop_path=backdrop_path)
         return result.single
 
-
+#altenative bolt://host.docker.internal:7687/ enable extra_host in docker-compose.yml
 if __name__ == "__main__":
     start = time.time()
-    greeter = CreateNode("bolt://127.0.0.1:17474/", "neo4j", "")
+    greeter = CreateNode("bolt://172.17.0.1:7687/", "neo4j", "")
     for page in range(1, 5):
-        res = requests.get('https://api.themoviedb.org/3/movie/popular?api_key=' + MOVIE_API+'&page='+str(page))
+        res = requests.get('https://api.themoviedb.org/3/movie/popular?api_key='+ MOVIE_API + '&page='+str(page))
         response = json.loads(res.text)
         for filme in range(0,len(response['results'])):
 
