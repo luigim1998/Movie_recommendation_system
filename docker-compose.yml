@@ -10,62 +10,28 @@ services:
     ports:
       - 7474:7474
       - 7687:7687
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
     volumes:
       - ./plugins:/plugins
       - ./data:/data
       - ./import:/import
       - ./conf:/conf
+      
     environment:
       - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
       - NEO4J_AUTH=none
       - NEO4J_dbms_allow__upgrade=true
-      # - NEO4J_apoc_import_file_enabled=true
-      # - NEO4J_dbms_shell_enabled=true
-      # - NEO4J_dbms_default__database=neo4j
-      # - NEO4J_dbms_security_auth__enabled=false
-      #- NEO4JLABS_PLUGINS=["graph-data-science", "apoc"]
-      #- NEO4J_dbms_security_procedures_whitelist=gds.*, apoc.*
-      #- NEO4J_dbms_security_procedures_unrestricted=gds.*, apoc.*
     networks:
       - neo4j_network
+  
   app:
     restart: on-failure
     container_name: sistema_recomendacao
     build: app
     ports:
       - "8080:8080"
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
     links:
       - neo4j
     depends_on:
       - neo4j
     networks:
       - neo4j_network
-  #     # KAFKA related configuration
-  #     NEO4J_kafka_bootstrap_servers: kafka:19092
-  #     NEO4J_streams_source_topic_nodes_neo4j: Person{*}
-  #     NEO4J_streams_source_topic_relationships_neo4j: KNOWS{*}
-  # zookeeper:
-  #   image: confluentinc/cp-zookeeper:latest
-  #   hostname: zookeeper
-  #   container_name: zookeeper
-  #   ports:
-  #     - "12181:12181"
-  #   environment:
-  #     ZOOKEEPER_CLIENT_PORT: 12181
-
-#   kafka:
-#     image: confluentinc/cp-kafka:latest
-#     hostname: kafka
-#     container_name: kafka
-#     ports:
-#       - "19092:19092"
-#     depends_on:
-#       - zookeeper
-#     environment:
-#       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-#       KAFKA_ZOOKEEPER_CONNECT: zookeeper:12181
-#       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:19092

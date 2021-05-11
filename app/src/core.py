@@ -24,7 +24,7 @@ class CreateNode:
 #altenative bolt://host.docker.internal:7687/ enable extra_host in docker-compose.yml
 if __name__ == "__main__":
     start = time.time()
-    greeter = CreateNode("bolt://172.17.0.1:7687/", "neo4j", "")
+    greeter = CreateNode("bolt://host.docker.internal:7687/", "neo4j", "")
     for page in range(1, 5):
         res = requests.get('https://api.themoviedb.org/3/movie/popular?api_key='+ MOVIE_API + '&page='+str(page))
         response = json.loads(res.text)
