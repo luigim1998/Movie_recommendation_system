@@ -57,7 +57,7 @@ if __name__ == "__main__":
         response = json.loads(res.text)
         for filme in range(0,len(response['results'])):
             results = response['results'][filme]
-            print(results)
+            # print(results)
             if ('id' in results) and ('original_title' in results) and ('overview' in results) and ('release_date' in results) and ('vote_average' in results) and ('backdrop_path' in results):
                 if results['genre_ids'] == []:
                     print(results['original_title'])
