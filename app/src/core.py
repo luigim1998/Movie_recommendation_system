@@ -20,6 +20,7 @@ class CreateNode:
         with self.driver.session() as session:
             find_popular_by_genre = session.write_transaction(self._find_popular_by_genre, genre_ids)
             print(find_popular_by_genre)
+            return find_popular_by_genre
     
     def create_user(self, name, username, password):
         with self.driver.session() as session:
@@ -28,20 +29,19 @@ class CreateNode:
     @staticmethod
     def _create_and_return_greeting(tx, id, genre_ids, title, overview, release_date, vote_average, backdrop_path):
         result = tx.run("CREATE (n:Filme {id: $id, genre_ids: $genre_ids, title: $title, overview: $overview, release_date: $release_date, vote_average: $vote_average, imageUrl: $backdrop_path })", id=id, genre_ids=genre_ids, title=title, overview=overview, release_date=release_date, vote_average=vote_average, backdrop_path=backdrop_path)
-        return result.single
+        return result.single()
     
     @staticmethod
     def _find_popular_by_genre(tx, genre_ids):
         # query = "MATCH (f:Filme) WHERE f.genre_ids[0] ="+genre_ids+"RETURN f ORDER BY f.vote_average DESC"
         query = "MATCH (f:Filme) WHERE "+str(genre_ids)+" IN f.genre_ids RETURN f ORDER BY f.vote_average DESC"
-        print(query)
         result = tx.run(query)
-        return result.single()
+        return result.data()
     
     @staticmethod
     def _create_user(tx, name, username, password):
         result = tx.run("CREATE (n:Pessoa {name: $name, username: $username, password: $password})", name=name, username=username, password=password)
-        return result.single
+        return result.single()
     
     @staticmethod
     def _find_movie_by_user(tx, username):
@@ -59,8 +59,8 @@ if __name__ == "__main__":
             results = response['results'][filme]
             # print(results)
             if ('id' in results) and ('original_title' in results) and ('overview' in results) and ('release_date' in results) and ('vote_average' in results) and ('backdrop_path' in results):
-                if results['genre_ids'] == []:
-                    print(results['original_title'])
+                # if results['genre_ids'] == []:
+                    # print(results['original_title'])
                 if results['backdrop_path'] == None and results['genre_ids'] != []:
                    
                     greeter.create_films(results['id'],results['genre_ids'], results['original_title'], results['overview'], results['release_date'], results['vote_average'], "Image not found")
