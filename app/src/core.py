@@ -20,10 +20,6 @@ class CreateNode:
     def find_popular_genre(self, genre_ids):
         with self.driver.session() as session:
             find_popular_by_genre = session.write_transaction(self._find_popular_by_genre, genre_ids)
-<<<<<<< HEAD
-            print(find_popular_by_genre)
-=======
->>>>>>> 63022565f99859373c443db96305289c8a782073
             return find_popular_by_genre
     
     def create_user(self, name, username, password):
@@ -34,31 +30,19 @@ class CreateNode:
     @staticmethod
     def _create_and_return_greeting(tx, id, genre_ids, title, overview, release_date, vote_average, backdrop_path):
         result = tx.run("CREATE (n:Filme {id: $id, genre_ids: $genre_ids, title: $title, overview: $overview, release_date: $release_date, vote_average: $vote_average, imageUrl: $backdrop_path })", id=id, genre_ids=genre_ids, title=title, overview=overview, release_date=release_date, vote_average=vote_average, backdrop_path=backdrop_path)
-<<<<<<< HEAD
-        return result.single()
-=======
         return result.data()
->>>>>>> 63022565f99859373c443db96305289c8a782073
     
     @staticmethod
     def _find_popular_by_genre(tx, genre_ids):
         # query = "MATCH (f:Filme) WHERE f.genre_ids[0] ="+genre_ids+"RETURN f ORDER BY f.vote_average DESC"
-<<<<<<< HEAD
-        query = "MATCH (f:Filme) WHERE "+str(genre_ids)+" IN f.genre_ids RETURN f ORDER BY f.vote_average DESC"
-=======
-        query = "MATCH (f:Filme) WHERE "+str(genre_ids)+" IN f.genre_ids RETURN f ORDER BY f.vote_average DESC LIMIT 5"
->>>>>>> 63022565f99859373c443db96305289c8a782073
+        query = "MATCH (f:Filme) WHERE "+str(genre_ids)+" IN f.genre_ids RETURN f ORDER BY f.vote_average DESC LIMIT 4"
         result = tx.run(query)
         return result.data()
     
     @staticmethod
     def _create_user(tx, name, username, password):
         result = tx.run("CREATE (n:Pessoa {name: $name, username: $username, password: $password})", name=name, username=username, password=password)
-<<<<<<< HEAD
-        return result.single()
-=======
         return result.data()
->>>>>>> 63022565f99859373c443db96305289c8a782073
     
     @staticmethod
     def _find_movie_by_user(tx, username):
