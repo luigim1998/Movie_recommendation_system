@@ -20,6 +20,10 @@ class CreateNode:
     def _create_and_return_greeting(tx, id, title, overview, release_date, vote_average, backdrop_path):
         result = tx.run("CREATE (n:Filme {id: $id, title: $title, overview: $overview, release_date: $release_date, vote_average: $vote_average, imageUrl: $backdrop_path })", id=id, title=title, overview=overview, release_date=release_date, vote_average=vote_average, backdrop_path=backdrop_path)
         return result.single
+    
+    @staticmethod
+    def _find_popular_by_genre(tx, genre):
+        result = tx.run("MATCH (f:Filme) WHERE f.genre = {} RETURN f ORDER BY f.vote_average DESC;".format(genre))
 
 #altenative bolt://host.docker.internal:7687/ enable extra_host in docker-compose.yml
 if __name__ == "__main__":
