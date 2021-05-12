@@ -23,7 +23,7 @@ class CreateNode:
     
     def create_user(self, name, username, password):
         with self.driver.session() as session:
-            create_user = session.write_transaction(self._create_user, name, username, password))
+            create_user = session.write_transaction(self._create_user, name, username, password)
 
     @staticmethod
     def _create_and_return_greeting(tx, id, genre_ids, title, overview, release_date, vote_average, backdrop_path):
@@ -33,7 +33,7 @@ class CreateNode:
     @staticmethod
     def _find_popular_by_genre(tx, genre_ids):
         # query = "MATCH (f:Filme) WHERE f.genre_ids[0] ="+genre_ids+"RETURN f ORDER BY f.vote_average DESC"
-        query = "MATCH (f:Filme) WHERE "+genre_ids+"IN f.genre_ids RETURN f ORDER BY f.vote_average DESC"
+        query = "MATCH (f:Filme) WHERE "+str(genre_ids)+" IN f.genre_ids RETURN f ORDER BY f.vote_average DESC"
         print(query)
         result = tx.run(query)
         return result.single()
