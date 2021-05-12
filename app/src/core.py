@@ -24,6 +24,17 @@ class CreateNode:
     @staticmethod
     def _find_popular_by_genre(tx, genre):
         result = tx.run("MATCH (f:Filme) WHERE f.genre = {} RETURN f ORDER BY f.vote_average DESC;".format(genre))
+        return result.data()
+    
+    @staticmethod
+    def _create_user(tx, name, username, password):
+        result = tx.run("CREATE (n:Pessoa {name: $name, username: $username, password: $password})", name=name, username=username, password=password)
+        return result.single
+    
+    @staticmethod
+    def _find_movie_by_user(tx, username):
+        result = tx.run("MATCH (f:Filme)-[:GOSTA]->(n:Pessoa) WHERE n.username = {} RETURN f;".format(username))
+        return result.data()
 
 #altenative bolt://host.docker.internal:7687/ enable extra_host in docker-compose.yml
 if __name__ == "__main__":
