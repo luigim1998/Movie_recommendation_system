@@ -12,19 +12,31 @@ class CreateNode:
     def close(self):
         self.driver.close()
 
-    def print_greeting(self, id, title, overview, release_date, vote_average, imageUrl):
+    def create_films(self, id, genre_ids, title, overview, release_date, vote_average, imageUrl):
         with self.driver.session() as session:
-            greeting = session.write_transaction(self._create_and_return_greeting, id, title, overview, release_date, vote_average, imageUrl)
+            greeting = session.write_transaction(self._create_and_return_greeting, id, genre_ids, title, overview, release_date, vote_average, imageUrl)
+
+    def find_popular_genre(self, genre_ids):
+        with self.driver.session() as session:
+            find_popular_by_genre = session.write_transaction(self._find_popular_by_genre, genre_ids)
+            print(find_popular_by_genre)
+    
+    def create_user(self, name, username, password):
+        with self.driver.session() as session:
+            create_user = session.write_transaction(self._create_user, name, username, password))
 
     @staticmethod
-    def _create_and_return_greeting(tx, id, title, overview, release_date, vote_average, backdrop_path):
-        result = tx.run("CREATE (n:Filme {id: $id, title: $title, overview: $overview, release_date: $release_date, vote_average: $vote_average, imageUrl: $backdrop_path })", id=id, title=title, overview=overview, release_date=release_date, vote_average=vote_average, backdrop_path=backdrop_path)
+    def _create_and_return_greeting(tx, id, genre_ids, title, overview, release_date, vote_average, backdrop_path):
+        result = tx.run("CREATE (n:Filme {id: $id, genre_ids: $genre_ids, title: $title, overview: $overview, release_date: $release_date, vote_average: $vote_average, imageUrl: $backdrop_path })", id=id, genre_ids=genre_ids, title=title, overview=overview, release_date=release_date, vote_average=vote_average, backdrop_path=backdrop_path)
         return result.single
     
     @staticmethod
-    def _find_popular_by_genre(tx, genre):
-        result = tx.run("MATCH (f:Filme) WHERE f.genre = {} RETURN f ORDER BY f.vote_average DESC;".format(genre))
-        return result.data()
+    def _find_popular_by_genre(tx, genre_ids):
+        # query = "MATCH (f:Filme) WHERE f.genre_ids[0] ="+genre_ids+"RETURN f ORDER BY f.vote_average DESC"
+        query = "MATCH (f:Filme) WHERE "+genre_ids+"IN f.genre_ids RETURN f ORDER BY f.vote_average DESC"
+        print(query)
+        result = tx.run(query)
+        return result.single()
     
     @staticmethod
     def _create_user(tx, name, username, password):
@@ -44,17 +56,22 @@ if __name__ == "__main__":
         res = requests.get('https://api.themoviedb.org/3/movie/popular?api_key='+ MOVIE_API + '&page='+str(page))
         response = json.loads(res.text)
         for filme in range(0,len(response['results'])):
-
-            if ('id' in response['results'][filme]) and ('original_title' in response['results'][filme]) and ('overview' in response['results'][filme]) and ('release_date' in response['results'][filme]) and ('vote_average' in response['results'][filme]) and ('backdrop_path' in response['results'][filme]):
-
-                if response['results'][filme]['backdrop_path'] == None:
-                    greeter.print_greeting(response['results'][filme]['id'],response['results'][filme]['original_title'], response['results'][filme]['overview'], response['results'][filme]['release_date'], response['results'][filme]['vote_average'], "Image not found")
+            results = response['results'][filme]
+            print(results)
+            if ('id' in results) and ('original_title' in results) and ('overview' in results) and ('release_date' in results) and ('vote_average' in results) and ('backdrop_path' in results):
+                if results['genre_ids'] == []:
+                    print(results['original_title'])
+                if results['backdrop_path'] == None and results['genre_ids'] != []:
+                   
+                    greeter.create_films(results['id'],results['genre_ids'], results['original_title'], results['overview'], results['release_date'], results['vote_average'], "Image not found")
 
                 else:
-                    greeter.print_greeting(response['results'][filme]['id'],response['results'][filme]['original_title'], response['results'][filme]['overview'], response['results'][filme]['release_date'], response['results'][filme]['vote_average'], "https://image.tmdb.org/t/p/w500/"+response['results'][filme]['backdrop_path'])
+                    if results['genre_ids'] != []:
+                        greeter.create_films(results['id'],results['genre_ids'], results['original_title'], results['overview'], results['release_date'], results['vote_average'], "https://image.tmdb.org/t/p/w500/"+results['backdrop_path'])
 
             else:
                 continue
+    greeter.find_popular_genre(12)
     end = time.time()
     print("tempo", end - start)
     greeter.close()
