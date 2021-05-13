@@ -4,7 +4,9 @@ import time
 from neo4j import GraphDatabase, basic_auth
 from flask import Flask, jsonify, request, render_template
 from markupsafe import escape
-from conf.settings import MOVIE_API
+#from conf.settings import MOVIE_API
+
+MOVIE_API = "184d1bb178e96c89ca0cd2d44851b87b"
 
 app = Flask(__name__)
 
@@ -97,31 +99,33 @@ class createNode:
 @app.route('/gender/<int:genre_id>', methods=['GET'])
 def api_genre_id(genre_id):
     if request.method == 'GET':
-        greeter.find_popular_genre(genre_id)
+        return jsonify(greeter.find_popular_genre(genre_id))
 # GET movie by user
 @app.route('/movies/<username>/', methods=['GET'])
 def api_user_like_movie(username):
     if request.method == 'GET':
-        greeter.find_by_like(username)
+        return jsonify(greeter.find_by_like(username))
 # GET movie by user movies
 @app.route('/moviesRecommended/<username>/', methods=['GET'])
 def api_movie_by_like(username):
     if request.method == 'GET':
-        greeter.find_by_user(username)
+        return jsonify(greeter.find_by_user(username))
 # POST like movie
 @app.route('/likeMovie/<username>/<int:movie_id>', methods=['POST'])
 def api_like_movie(username, movie_id):
     if request.method == 'POST':
         greeter.like_movie(username, movie_id)
+        return 'Sucesss', 200
 # GET all users
 @app.route('/users', methods=['GET'])
-def users():
-    greeter.show_users()
+def api_users():
+    return jsonify(greeter.show_users())
 # POST create user
 @app.route('/newUser/<name>/<username>/<password>', methods=['POST'])
-def api_users(name, username, password):
+def api_create_user(name, username, password):
     if request.method == 'POST':
         greeter.create_user(name, username, password)
+        return 'Sucesss', 200
 
 ############## the end ##############
 
