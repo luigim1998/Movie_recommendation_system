@@ -4,9 +4,7 @@ import time
 from neo4j import GraphDatabase, basic_auth
 from flask import Flask, jsonify, request, render_template
 from markupsafe import escape
-#from conf.settings import MOVIE_API
-
-MOVIE_API = "184d1bb178e96c89ca0cd2d44851b87b"
+from conf.settings import MOVIE_API
 
 app = Flask(__name__)
 

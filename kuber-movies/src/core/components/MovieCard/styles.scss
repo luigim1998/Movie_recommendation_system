@@ -1,0 +1,10 @@
+.movie-card img {
+    width: 15%;
+    height: 20%;
+    border-radius: 10px;
+    margin-right: 1.65%;
+    margin-bottom: 1%;
+    &:hover {
+        border: 1px solid #E1E1E1;
+    }
+}
