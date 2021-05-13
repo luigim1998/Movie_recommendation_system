@@ -83,19 +83,19 @@ class createNode:
 
     @staticmethod
     def _like_movie(tx, username, movie_id):
-        query = 'MATCH (p:Pessoa), (f:Filme) WHERE p.username = "{}" AND id(f) = {} CREATE (p)-[:CURTIU]->(f)'.format(username, movie_id)
+        query = 'MATCH (p:Pessoa), (f:Filme) WHERE p.username = "{}" AND id(f) = {} MERGE (p)-[:CURTIU]->(f)'.format(username, movie_id)
         result = tx.run(query)
         return result.data()
     
     # descurtir filme
     def dislike_movie(self, username, movie_id):
         with self.driver.session() as session:
-            movie_disliked = session.write_transaction(self._like_movie, username, movie_id)
+            movie_disliked = session.write_transaction(self._dislike_movie, username, movie_id)
             return movie_disliked
 
     @staticmethod
     def _dislike_movie(tx, username, movie_id):
-        query = 'MATCH (p:Pessoa)-[c:CURTIU]->(f:Filme) WHERE p.username = "{}" AND id(f) = {} DELETE c'
+        query = 'MATCH (p:Pessoa)-[c:CURTIU]->(f:Filme) WHERE p.username = "{}" AND id(f) = {} DELETE c'.format(username, movie_id)
         result = tx.run(query)
         return result.data()
 
@@ -198,7 +198,10 @@ if __name__ == "__main__":
     greeter.like_movie("ttezo", 17)
     print("Filmes populares do gênero 12", greeter.find_popular_genre(12))
     print("Filmes gostados por ttezo", greeter.find_by_user("ttezo"))
-    print("Filmes recomendados por ttezo", greeter.find_by_like("luigim1998"))
+    greeter.dislike_movie("ttezo", 17)
+    print("Filmes gostados por ttezo", greeter.find_by_user("ttezo"))
+    print("Filmes recomendados por luigim1998", greeter.find_by_like("luigim1998"))
+    print("Filmes recomendados pelo filme 15", greeter.recommend_movie_by_movie(15))
     print("Nomes dos usuários", greeter.show_users())
 
     end = time.time()
