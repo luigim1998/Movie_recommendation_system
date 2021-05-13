@@ -140,15 +140,15 @@ if __name__ == "__main__":
         for filme in range(0,len(response['results'])):
             results = response['results'][filme]
 
-            if ('id' in results) and ('original_title' in results) and ('overview' in results) and ('release_date' in results) and ('vote_average' in results) and ('backdrop_path' in results):
+            if ('id' in results) and ('original_title' in results) and ('overview' in results) and ('release_date' in results) and ('vote_average' in results) and ('poster_path' in results):
                 # if results['genre_ids'] == []:
                     # print(results['original_title'])
-                if results['backdrop_path'] == None and results['genre_ids'] != []:
+                if results['poster_path'] == None and results['genre_ids'] != []:
                     greeter.create_films(results['id'],results['genre_ids'], results['original_title'], results['overview'], results['release_date'], results['vote_average'], "Image not found")
                     
                 else:
                     if results['genre_ids'] != []:
-                        greeter.create_films(results['id'],results['genre_ids'], results['original_title'], results['overview'], results['release_date'], results['vote_average'], "https://image.tmdb.org/t/p/w500/"+results['backdrop_path'])
+                        greeter.create_films(results['id'],results['genre_ids'], results['original_title'], results['overview'], results['release_date'], results['vote_average'], "https://image.tmdb.org/t/p/w500/"+results['poster_path'])
 
             else:
                 continue
