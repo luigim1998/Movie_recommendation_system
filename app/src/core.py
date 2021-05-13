@@ -111,7 +111,7 @@ def api_genre_id(genre_id):
     if request.method == 'GET':
         return jsonify(greeter.find_popular_genre(genre_id))
 # GET movie by user
-@app.route('/movies/<username>/', methods=['GET'])
+@app.route('/movies/<username>', methods=['GET'])
 def api_user_like_movie(username):
     if request.method == 'GET':
         return jsonify(greeter.find_by_user(username))
@@ -120,6 +120,11 @@ def api_user_like_movie(username):
 def api_movie_by_like(username):
     if request.method == 'GET':
         return jsonify(greeter.find_by_like(username))
+# GET movies by movie
+@app.route('/moviesByMovie/<int:movie_id>', methods=['GET'])
+def api_recommend_movie_by_movie(movie_id):
+    if request.method == 'GET':
+        return jsonify(greeter.recommend_movie_by_movie(movie_id))
 # POST like movie
 @app.route('/likeMovie/<username>/<int:movie_id>', methods=['POST'])
 def api_like_movie(username, movie_id):
