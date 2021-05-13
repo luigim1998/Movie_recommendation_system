@@ -16,6 +16,7 @@ class createNode:
     def close(self):
         self.driver.close()
 
+    # criar filmes
     def create_films(self, id, genre_ids, title, overview, release_date, vote_average, imageUrl):
         with self.driver.session() as session:
             greeting = session.write_transaction(self._create_and_return_greeting, id, genre_ids, title, overview, release_date, vote_average, imageUrl)
@@ -26,6 +27,7 @@ class createNode:
         result = tx.run("CREATE (n:Filme {id_filme: $id, genre_ids: $genre_ids, title: $title, overview: $overview, release_date: $release_date, vote_average: $vote_average, imageUrl: $backdrop_path })", id=id, genre_ids=genre_ids, title=title, overview=overview, release_date=release_date, vote_average=vote_average, backdrop_path=backdrop_path)
         return result.data()
 
+    # acha os filmes de um determinado gênero (através do id do gênero)
     def find_popular_genre(self, genre_ids):
         with self.driver.session() as session:
             find_popular_by_genre = session.read_transaction(self._find_popular_by_genre, genre_ids)
@@ -38,6 +40,7 @@ class createNode:
         result = tx.run(query)
         return result.data()
 
+    # cria usuario
     def create_user(self, name, username, password):
         with self.driver.session() as session:
             create_user = session.write_transaction(self._create_user, name, username, password)
@@ -48,6 +51,7 @@ class createNode:
         result = tx.run("CREATE (n:Pessoa {name: $name, username: $username, password: $password})", name=name, username=username, password=password)
         return result.data()
 
+    # achar filmes curtidos pelo usuario
     def find_by_user(self, username):
         with self.driver.session() as session:
             find_movie_by_user = session.read_transaction(self._find_movie_by_user, username)
@@ -59,6 +63,7 @@ class createNode:
         print(result)
         return result.data()
 
+    #recomenda filmes baseado nos filmes que os outros usuarios curtiram, para isso ele analisa os filmes que os usuarios assistiram e que o usuario viu tambem
     def find_by_like(self, username):
         with self.driver.session() as session:
             find_movie_by_like = session.read_transaction(self._find_movie_by_like, username)
@@ -70,6 +75,7 @@ class createNode:
         result = tx.run(query)
         return result.data()
 
+    # usuario curte determinado filme
     def like_movie(self, username, movie_id):
         with self.driver.session() as session:
             movie_liked = session.write_transaction(self._like_movie, username, movie_id)
@@ -81,6 +87,19 @@ class createNode:
         result = tx.run(query)
         return result.data()
     
+    # descurtir filme
+    def dislike_movie(self, username, movie_id):
+        with self.driver.session() as session:
+            movie_disliked = session.write_transaction(self._like_movie, username, movie_id)
+            return movie_disliked
+
+    @staticmethod
+    def _dislike_movie(tx, username, movie_id):
+        query = 'MATCH (p:Pessoa)-[c:CURTIU]->(f:Filme) WHERE p.username = "{}" AND id(f) = {} DELETE c'
+        result = tx.run(query)
+        return result.data()
+
+    # mostra todos os usuarios
     def show_users(self):
         with self.driver.session() as session:
             users = session.read_transaction(self._show_users)
@@ -92,6 +111,7 @@ class createNode:
         result = tx.run(query)
         return result.data()
     
+    # recomendar filmes que outros usuarios baseados no filme
     def recommend_movie_by_movie(self, movie_id):
         with self.driver.session() as session:
             movies = session.read_transaction(self._recommend_movie_by_movie, movie_id)
@@ -99,7 +119,7 @@ class createNode:
     
     @staticmethod
     def _recommend_movie_by_movie(tx, movie_id):
-        query = "MATCH (f:Filme)<-[:CURTIU]-(p2:Person)-[:CURTIU]->(f2:Filme) WHERE f.movie_id = {} AND f2.movie_id <> {} RETURN f2, id(f2) as id".format(movie_id, movie_id)
+        query = "MATCH (f:Filme)<-[:CURTIU]-(p2:Person)-[:CURTIU]->(f2:Filme) WHERE id(f) = {} AND id(f2) <> {} RETURN f2, id(f2) as id".format(movie_id, movie_id)
         result = tx.run(query)
         return result.data()
     
