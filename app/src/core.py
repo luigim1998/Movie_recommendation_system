@@ -66,7 +66,7 @@ class createNode:
     
     @staticmethod
     def _find_movie_by_like(tx, username):
-        query = 'MATCH (p:Pessoa)-[:CURTIU]->(f:Filme)<-[:CURTIU]-(p2:Pessoa)-[:CURTIU]->(f2:Filme) WHERE p.name = "{}" WITH f2 WHERE NOT (p)-[:CURTIU]->(f2) RETURN f2, COUNT(f2) as f2_t, id(f2) as id ORDER BY f2_t DESC LIMIT 4'.format(username)
+        query = 'MATCH (p:Pessoa)-[:CURTIU]->(f:Filme)<-[:CURTIU]-(p2:Pessoa)-[:CURTIU]->(f2:Filme) WHERE p.username = "{}" WITH f2 WHERE NOT (p)-[:CURTIU]->(f2) RETURN f2, COUNT(f2) as f2_t ORDER BY f2_t DESC LIMIT 4'.format(username)
         result = tx.run(query)
         return result.data()
 
@@ -114,28 +114,28 @@ def api_genre_id(genre_id):
 @app.route('/movies/<username>/', methods=['GET'])
 def api_user_like_movie(username):
     if request.method == 'GET':
-        return jsonify(greeter.find_by_like(username))
+        return jsonify(greeter.find_by_user(username))
 # GET movie by user movies
 @app.route('/moviesRecommended/<username>/', methods=['GET'])
 def api_movie_by_like(username):
     if request.method == 'GET':
-        return jsonify(greeter.find_by_user(username))
+        return jsonify(greeter.find_by_like(username))
 # POST like movie
 @app.route('/likeMovie/<username>/<int:movie_id>', methods=['POST'])
 def api_like_movie(username, movie_id):
     if request.method == 'POST':
         greeter.like_movie(username, movie_id)
-        return 'Sucesss', 200
-# GET all users
-@app.route('/users', methods=['GET'])
+        return 'OK', 200
+# GET all users or POST create user
+@app.route('/users', methods=['GET', 'POST'])
 def api_users():
-    return jsonify(greeter.show_users())
-# POST create user
-@app.route('/newUser/<name>/<username>/<password>', methods=['POST'])
-def api_create_user(name, username, password):
+    if request.method == 'GET':
+        return jsonify(greeter.show_users())
     if request.method == 'POST':
-        greeter.create_user(name, username, password)
-        return 'Sucesss', 200
+        # print(request.is_json)
+        content = request.json
+        greeter.create_user(content['name'], content['username'], content['password'])
+        return 'OK', 200
 
 ############## the end ##############
 
