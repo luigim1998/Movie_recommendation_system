@@ -27,8 +27,11 @@ services:
     restart: on-failure
     container_name: sistema_recomendacao
     build: app
+    expose:
+      - "9566"
     ports:
       - "8080:8080"
+      - "9566:9566"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     links:

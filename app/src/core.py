@@ -3,6 +3,7 @@ import json
 import time
 from neo4j import GraphDatabase, basic_auth
 from conf.settings import MOVIE_API
+from flask import Flask, jsonify, request
 
 class CreateNode:
 
@@ -87,6 +88,19 @@ class CreateNode:
         result = tx.run(query)
         return result.data()
 
+app = Flask(__name__)
+
+@app.route("/users", methods=["GET", "POST"])
+def api_users():
+    if (request.method =="GET"):
+        result = greeter.show_users()
+        return jsonify(message = result, statusCode= 200)
+    else:
+        name = request.form.get("name")
+        username = request.form.get("username")
+        password = request.form.get("password")
+        greeter.create_user(name, username, password)
+
 #altenative bolt://host.docker.internal:7687/ enable extra_host in docker-compose.yml
 if __name__ == "__main__":
     start = time.time()
@@ -125,4 +139,6 @@ if __name__ == "__main__":
     print("Nomes dos usuários", greeter.show_users())
     end = time.time()
     print("tempo", end - start)
+
+    app.run (port = 9566)
     greeter.close()
