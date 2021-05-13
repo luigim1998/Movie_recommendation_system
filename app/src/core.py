@@ -2,10 +2,13 @@ import requests
 import json
 import time
 from neo4j import GraphDatabase, basic_auth
+from flask import Flask, jsonify, request, render_template
+from markupsafe import escape
 from conf.settings import MOVIE_API
-from flask import Flask, jsonify, request
 
-class CreateNode:
+app = Flask(__name__)
+
+class createNode:
 
     def __init__(self, uri, user, password):
         self.driver = GraphDatabase.driver(uri, auth=(user, password), encrypted=False)
@@ -87,25 +90,46 @@ class CreateNode:
         query = "MATCH (n:Pessoa) RETURN id(n) as id, n.name as name, n.username as username"
         result = tx.run(query)
         return result.data()
+    
+############## front end requests ##############
 
-app = Flask(__name__)
-
-@app.route("/users", methods=["GET", "POST"])
-def api_users():
-    if (request.method =="GET"):
-        result = greeter.show_users()
-        return jsonify(message = result, statusCode= 200)
-    else:
-        name = request.form.get("name")
-        username = request.form.get("username")
-        password = request.form.get("password")
+# GET movie by gender
+@app.route('/gender/<int:genre_id>', methods=['GET'])
+def api_genre_id(genre_id):
+    if request.method == 'GET':
+        greeter.find_popular_genre(genre_id)
+# GET movie by user
+@app.route('/movies/<username>/', methods=['GET'])
+def api_user_like_movie(username):
+    if request.method == 'GET':
+        greeter.find_by_like(username)
+# GET movie by user movies
+@app.route('/moviesRecommended/<username>/', methods=['GET'])
+def api_movie_by_like(username):
+    if request.method == 'GET':
+        greeter.find_by_user(username)
+# POST like movie
+@app.route('/likeMovie/<username>/<int:movie_id>', methods=['POST'])
+def api_like_movie(username, movie_id):
+    if request.method == 'POST':
+        greeter.like_movie(username, movie_id)
+# GET all users
+@app.route('/users', methods=['GET'])
+def users():
+    greeter.show_users()
+# POST create user
+@app.route('/newUser/<name>/<username>/<password>', methods=['POST'])
+def api_users(name, username, password):
+    if request.method == 'POST':
         greeter.create_user(name, username, password)
 
-#altenative bolt://host.docker.internal:7687/ enable extra_host in docker-compose.yml
+############## the end ##############
+
 if __name__ == "__main__":
     start = time.time()
 
-    greeter = CreateNode("bolt://host.docker.internal:7687/", "neo4j", "")
+    global greeter
+    greeter = createNode("bolt://host.docker.internal:7687/", "neo4j", "")
 
     for page in range(1, 3):
         res = requests.get('https://api.themoviedb.org/3/movie/popular?api_key='+ MOVIE_API + '&page='+str(page))
@@ -137,8 +161,9 @@ if __name__ == "__main__":
     # print("Filmes gostados por ttezo", greeter.find_by_user("ttezo"))
     print("Filmes recomendados por ttezo", greeter.find_by_like("luigim1998"))
     print("Nomes dos usuários", greeter.show_users())
+
     end = time.time()
     print("tempo", end - start)
 
-    app.run (port = 9566)
+    app.run(host="0.0.0.0", debug=True)
     greeter.close()
