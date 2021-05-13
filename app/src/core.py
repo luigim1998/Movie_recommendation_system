@@ -122,7 +122,18 @@ class createNode:
         query = "MATCH (f:Filme)<-[:CURTIU]-(p2:Person)-[:CURTIU]->(f2:Filme) WHERE id(f) = {} AND id(f2) <> {} RETURN f2, id(f2) as id".format(movie_id, movie_id)
         result = tx.run(query)
         return result.data()
+
+    def search_movie_by_id(self, movie_id):
+        with self.driver.session() as session:
+            search_movie = session.read_transaction(self._search_movie_by_id, movie_id)
+            return search_movie
     
+    @staticmethod
+    def _search_movie_by_id(tx, movie_id):
+        query = "MATCH (f:Filme) WHERE id(f) = {} RETURN f, id(f) as id".format(movie_id)
+        result = tx.run(query)
+        return result.data()
+
 ############## front end requests ##############
 
 # GET movie by gender
@@ -203,6 +214,7 @@ if __name__ == "__main__":
     print("Filmes recomendados por luigim1998", greeter.find_by_like("luigim1998"))
     print("Filmes recomendados pelo filme 15", greeter.recommend_movie_by_movie(15))
     print("Nomes dos usuários", greeter.show_users())
+    print("Filme 12", greeter.search_movie_by_id(12))
 
     end = time.time()
     print("tempo", end - start)
