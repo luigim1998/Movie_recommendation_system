@@ -2,7 +2,7 @@ import requests
 import json
 import time
 from neo4j import GraphDatabase, basic_auth
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, make_response, render_template
 from markupsafe import escape
 from conf.settings import MOVIE_API
 
@@ -36,7 +36,7 @@ class createNode:
     @staticmethod
     def _find_popular_by_genre(tx, genre_ids):
         # query = "MATCH (f:Filme) WHERE f.genre_ids[0] ="+genre_ids+"RETURN f ORDER BY f.vote_average DESC"
-        query = "MATCH (f:Filme) WHERE {} IN f.genre_ids RETURN f, id(f) as id ORDER BY f.vote_average DESC LIMIT 4".format(genre_ids)
+        query = "MATCH (f:Filme) WHERE {} IN f.genre_ids RETURN id(f) as id, f.title as title, f.imageUrl as imageUrl ORDER BY f.vote_average DESC LIMIT 4".format(genre_ids)
         result = tx.run(query)
         return result.data()
 
@@ -59,7 +59,7 @@ class createNode:
     
     @staticmethod
     def _find_movie_by_user(tx, username):
-        result = tx.run('MATCH (f:Filme)<-[:CURTIU]-(n:Pessoa) WHERE n.username = "{}" RETURN f, id(f) as id;'.format(username))
+        result = tx.run('MATCH (f:Filme)<-[:CURTIU]-(n:Pessoa) WHERE n.username = "{}" RETURN id(f) as id, f.title as title, f.imageUrl as imageUrl'.format(username))
         print(result)
         return result.data()
 
@@ -71,7 +71,7 @@ class createNode:
     
     @staticmethod
     def _find_movie_by_like(tx, username):
-        query = 'MATCH (p:Pessoa)-[:CURTIU]->(f:Filme)<-[:CURTIU]-(p2:Pessoa)-[:CURTIU]->(f2:Filme) WHERE p.username = "{}" WITH f2 WHERE NOT (p)-[:CURTIU]->(f2) RETURN f2, COUNT(f2) as f2_t ORDER BY f2_t DESC LIMIT 4'.format(username)
+        query = 'MATCH (p:Pessoa)-[:CURTIU]->(f:Filme)<-[:CURTIU]-(p2:Pessoa)-[:CURTIU]->(f2:Filme) WHERE p.username = "{}" WITH f2 WHERE NOT (p)-[:CURTIU]->(f2) RETURN id(f2) as id,f2.title as title, f2.imageUrl as imageUrl, COUNT(f2) as f2_t ORDER BY f2_t DESC LIMIT 4'.format(username)
         result = tx.run(query)
         return result.data()
 
@@ -119,7 +119,7 @@ class createNode:
     
     @staticmethod
     def _recommend_movie_by_movie(tx, movie_id):
-        query = "MATCH (f:Filme)<-[:CURTIU]-(p2:Person)-[:CURTIU]->(f2:Filme) WHERE id(f) = {} AND id(f2) <> {} RETURN f2, id(f2) as id".format(movie_id, movie_id)
+        query = "MATCH (f:Filme)<-[:CURTIU]-(p2:Pessoa)-[:CURTIU]->(f2:Filme) WHERE id(f) = {} AND id(f2) <> {} RETURN id(f2) as id,f2.title as title, f2.imageUrl as imageUrl".format(movie_id, movie_id)
         result = tx.run(query)
         return result.data()
 
@@ -141,37 +141,54 @@ class createNode:
 def api_genre_id(genre_id):
     if request.method == 'GET':
         return jsonify(greeter.find_popular_genre(genre_id))
+
 # GET movie by user
 @app.route('/movies/<username>', methods=['GET'])
 def api_user_like_movie(username):
     if request.method == 'GET':
         return jsonify(greeter.find_by_user(username))
-# GET movie by user movies
-@app.route('/moviesRecommended/<username>/', methods=['GET'])
+
+# GET movie details
+@app.route('/movieDetails/<int:movie_id>', methods=['GET'])
+def api_movie_details(movie_id):
+    if request.method == 'GET':
+        return jsonify(greeter.search_movie_by_id(movie_id))
+
+# GET movies by user movies
+@app.route('/moviesRecommended/<username>', methods=['GET'])
 def api_movie_by_like(username):
     if request.method == 'GET':
         return jsonify(greeter.find_by_like(username))
+
 # GET movies by movie
 @app.route('/moviesByMovie/<int:movie_id>', methods=['GET'])
 def api_recommend_movie_by_movie(movie_id):
     if request.method == 'GET':
         return jsonify(greeter.recommend_movie_by_movie(movie_id))
-# POST like movie
-@app.route('/likeMovie/<username>/<int:movie_id>', methods=['POST'])
+
+# POST like movie or DELETE dislike movie
+@app.route('/likeMovie/<username>/<int:movie_id>', methods=['POST', 'DELETE'])
 def api_like_movie(username, movie_id):
     if request.method == 'POST':
         greeter.like_movie(username, movie_id)
-        return 'OK', 200
+        return 'OK', 201
+
+    if request.method == 'DELETE':
+        greeter.dislike_movie(username, movie_id)
+        res = make_response(jsonify({}), 204)
+        return res
+
 # GET all users or POST create user
 @app.route('/users', methods=['GET', 'POST'])
 def api_users():
     if request.method == 'GET':
         return jsonify(greeter.show_users())
+
     if request.method == 'POST':
         # print(request.is_json)
         content = request.json
         greeter.create_user(content['name'], content['username'], content['password'])
-        return 'OK', 200
+        return 'OK', 201
 
 ############## the end ##############
 
