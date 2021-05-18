@@ -137,6 +137,7 @@ class createNode:
         result = tx.run(query)
         return result.data()
 
+
 ############## front end requests ##############
 
 # GET movie by gender
@@ -207,7 +208,6 @@ if __name__ == "__main__":
 
     global greeter
     greeter = createNode("bolt://host.docker.internal:7687/", "neo4j", "")
-
     for page in range(1, 3):
         res = requests.get('https://api.themoviedb.org/3/movie/popular?api_key='+ MOVIE_API + '&page='+str(page))
         response = json.loads(res.text)
@@ -257,14 +257,14 @@ if __name__ == "__main__":
     greeter.like_movie("ttezo", 15)
     greeter.like_movie("ttezo", 17)
     
-    print("Filmes populares do gênero 12", greeter.find_popular_genre(12))
-    print("Filmes gostados por ttezo", greeter.find_by_user("ttezo"))
-    greeter.dislike_movie("ttezo", 17)
-    print("Filmes gostados por ttezo", greeter.find_by_user("ttezo"))
-    print("Filmes recomendados por luigim1998", greeter.find_by_like("luigim1998"))
-    print("Filmes recomendados pelo filme 15", greeter.recommend_movie_by_movie(15))
-    print("Nomes dos usuários", greeter.show_users())
-    print("Filme 12", greeter.search_movie_by_id(12))
+    # print("Filmes populares do gênero 12", greeter.find_popular_genre(12))
+    # print("Filmes gostados por ttezo", greeter.find_by_user("ttezo"))
+    # greeter.dislike_movie("ttezo", 17)
+    # print("Filmes gostados por ttezo", greeter.find_by_user("ttezo"))
+    # print("Filmes recomendados por luigim1998", greeter.find_by_like("luigim1998"))
+    # print("Filmes recomendados pelo filme 15", greeter.recommend_movie_by_movie(15))
+    # print("Nomes dos usuários", greeter.show_users())
+    # print("Filme 12", greeter.search_movie_by_id(12))
 
     end = time.time()
     print("tempo", end - start)

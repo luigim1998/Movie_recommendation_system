@@ -14,13 +14,14 @@ const List = () => {
     const [filmes, setFilmes] = useState<movie[]>()
 
     useEffect(() => {
-        api.get(`/movies/${user}`)
+        
+        api.get(`/moviesRecommended/${user}`)
             .then(res => setFilmes(res.data))
     },[user])
 
     return (
         <div className="list-container">
-            <h4 className="movie-list-title">Sua Lista de Filmes, {user}:</h4>
+            <h4 className="movie-list-title">Sua Lista de Filmes Recomendados, {user}:</h4>
             <div className="movie-list">
                 {
                     filmes === undefined ? '' :
