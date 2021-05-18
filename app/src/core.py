@@ -3,10 +3,12 @@ import json
 import time
 from neo4j import GraphDatabase, basic_auth
 from flask import Flask, jsonify, request, make_response, render_template
+from flask_cors import CORS, cross_origin
 from markupsafe import escape
 from conf.settings import MOVIE_API
 
 app = Flask(__name__)
+CORS(app, resources={r"/localhost/*": {"origins": "*"}})
 
 class createNode:
 
@@ -138,36 +140,42 @@ class createNode:
 
 # GET movie by gender
 @app.route('/gender/<int:genre_id>', methods=['GET'])
+@cross_origin()
 def api_genre_id(genre_id):
     if request.method == 'GET':
         return jsonify(greeter.find_popular_genre(genre_id))
 
 # GET movie by user
 @app.route('/movies/<username>', methods=['GET'])
+@cross_origin()
 def api_user_like_movie(username):
     if request.method == 'GET':
         return jsonify(greeter.find_by_user(username))
 
 # GET movie details
 @app.route('/movieDetails/<int:movie_id>', methods=['GET'])
+@cross_origin()
 def api_movie_details(movie_id):
     if request.method == 'GET':
         return jsonify(greeter.search_movie_by_id(movie_id))
 
 # GET movies by user movies
 @app.route('/moviesRecommended/<username>', methods=['GET'])
+@cross_origin()
 def api_movie_by_like(username):
     if request.method == 'GET':
         return jsonify(greeter.find_by_like(username))
 
 # GET movies by movie
 @app.route('/moviesByMovie/<int:movie_id>', methods=['GET'])
+@cross_origin()
 def api_recommend_movie_by_movie(movie_id):
     if request.method == 'GET':
         return jsonify(greeter.recommend_movie_by_movie(movie_id))
 
 # POST like movie or DELETE dislike movie
 @app.route('/likeMovie/<username>/<int:movie_id>', methods=['POST', 'DELETE'])
+@cross_origin()
 def api_like_movie(username, movie_id):
     if request.method == 'POST':
         greeter.like_movie(username, movie_id)
@@ -180,6 +188,7 @@ def api_like_movie(username, movie_id):
 
 # GET all users or POST create user
 @app.route('/users', methods=['GET', 'POST'])
+@cross_origin()
 def api_users():
     if request.method == 'GET':
         return jsonify(greeter.show_users())
