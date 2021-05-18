@@ -1,5 +1,5 @@
 import './styles.scss';
-import MovieCard from '../../core/components/MovieCard';
+// import MovieCard from '../../core/components/MovieCard';
 const Gender = () => {
     return (
         <div className="gender-container">

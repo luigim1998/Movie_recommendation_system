@@ -3,7 +3,7 @@ import { useHistory, Link } from 'react-router-dom';
 import api from '../../api';
 import './styles.scss';
 
-const Login: React.FC = () => {
+const Login = () => {
     const history = useHistory()
     const [user, setUser] = useState("")
 
@@ -42,7 +42,7 @@ const Login: React.FC = () => {
                 />
                 <label>Senha:</label>
                 <input 
-                    type="text"
+                    type="password"
                     placeholder="senha" 
                 //     value={user} 
                 //     onChange={e => setUser(e.target.value)}
