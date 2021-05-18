@@ -230,6 +230,13 @@ if __name__ == "__main__":
     
     greeter.create_user("Luigi Muller", "luigim1998", 'luluzinho')
     greeter.create_user("Miller", "ttezo", 'Tarlisonzinho')
+    greeter.create_user("Pedro Aleph", "pedroaleph", 'password')
+    greeter.create_user("Talirson", "magictorto", 'hatsunemiku')
+    greeter.create_user("Leandro", "balico", 'kubernates')
+    greeter.create_user("Joshua", "joshua", 'joshua')
+    greeter.create_user("Victor", "rocha", 'barbosa')
+    greeter.create_user("Franscisco", "chico", 'chicael')
+    greeter.create_user("Ewelly", "ewelly", 'ewelly')
     greeter.like_movie("luigim1998", 10)
     greeter.like_movie("ttezo", 10)
     greeter.like_movie("ttezo", 15)
