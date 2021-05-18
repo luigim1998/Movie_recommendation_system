@@ -8,7 +8,7 @@ from markupsafe import escape
 from conf.settings import MOVIE_API
 
 app = Flask(__name__)
-CORS(app, resources={r"/localhost/*": {"origins": "*"}})
+CORS(app)
 
 class createNode:
 
