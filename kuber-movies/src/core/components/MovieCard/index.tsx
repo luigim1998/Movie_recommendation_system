@@ -1,12 +1,25 @@
 import './styles.scss';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import { FormEvent } from 'react';
 
- 
-const MovieCard = () => {
+interface props{
+    imagem: string,
+    id:number
+}
+
+const MovieCard = (prop: props) => {  
+    const history = useHistory()
+
+    const handleSubmit = (e: FormEvent) =>{
+        e.preventDefault()
+        history.push('/movie', {id: prop.id})
+    }
     return ( 
-    <Link to="/list/1" className="movie-card">
-        <img src="https://www.themoviedb.org/t/p/w600_and_h900_bestv2/klAIFewuqcyEmH1SMtR2XbMyqzM.jpg" alt="" />
-    </Link>
+        <Link to="/movie" className="movie-card" onClick={e=> handleSubmit(e)}>
+            {
+                <img src={prop.imagem} alt="" />
+            }
+        </Link>
     );
 }
  

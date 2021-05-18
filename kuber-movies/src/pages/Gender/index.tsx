@@ -13,12 +13,12 @@ const Gender = () => {
             </div>
             <h4 className="gender-movie-title">Filmes do Gênero:</h4>
             <div className="gender-movie">
+                {/* <MovieCard />
                 <MovieCard />
                 <MovieCard />
                 <MovieCard />
                 <MovieCard />
-                <MovieCard />
-                <MovieCard />
+                <MovieCard /> */}
             </div>
         </div>
     );

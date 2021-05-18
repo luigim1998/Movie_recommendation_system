@@ -3,21 +3,25 @@ import NavBar from "./core/components/NavBar";
 import Gender from "./pages/Gender";
 import List from "./pages/List";
 import MovieDetails from "./pages/List/components/MovieDetails";
+import Login from "./pages/Login";
 
 const Routes = () => {
     return ( 
         <BrowserRouter>
             <NavBar />
             <Switch>
-            <Route path="/genres" exact>
-                <Gender />
-            </Route>
-            <Route path="/list" exact>
-                <List />
-            </Route>
-            <Route path="/list/1">
-                    <MovieDetails />
-            </Route>
+                <Route exact path="/">
+                    <Login />
+                </Route>
+                <Route path="/genres" exact>
+                    <Gender />
+                </Route>
+                <Route path="/list" exact>
+                    <List />
+                </Route>
+                <Route path="/movie">
+                        <MovieDetails />
+                </Route>
             </Switch>
         </BrowserRouter>
      );
