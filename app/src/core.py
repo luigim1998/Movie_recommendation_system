@@ -8,7 +8,8 @@ from markupsafe import escape
 from conf.settings import MOVIE_API
 
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 class createNode:
 
