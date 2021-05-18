@@ -1,0 +1,46 @@
+.login {
+    max-width: 500px;
+    margin: 5% auto;
+    padding: 1%;
+    text-align: center;
+    border: 1px solid #E1E1E1;
+    border-radius: 10px;
+}
+.login form{
+    padding-bottom: 5px;
+}
+.login label{
+    text-align: left;
+    display: block;
+}
+
+.login input {
+    width: 100%;
+    padding: 6px 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    display: block;
+}
+
+.login button {
+    border: 0;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #136fbb;
+    color: #FFF;
+    &:hover {
+        font-weight: bold;
+    }
+}
+
+.create-user {
+    //text-decoration: none;
+    color: #FFF;
+    &:hover {
+        text-decoration: underline;
+        color: #FFF;
+        font-weight: bold;
+    }
+}

@@ -42,17 +42,17 @@ services:
       - neo4j_network
       - frontend_network
 
-  kuber-movies:
-    build: kuber-movies
+  # kuber-movies:
+  #   build: kuber-movies
 
-    ports: 
-      - "3000:3000"
+  #   ports: 
+  #     - "3000:3000"
 
-    networks:
-      - frontend_network
+  #   networks:
+  #     - frontend_network
 
-    depends_on: 
-      - app
+  #   depends_on: 
+  #     - app
 
 networks:
   neo4j_network:

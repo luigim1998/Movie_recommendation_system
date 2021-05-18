@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import api from '../../api';
+import './styles.scss';
 
 const Login: React.FC = () => {
     const history = useHistory()
@@ -29,14 +30,34 @@ const Login: React.FC = () => {
         }
 
     return (
-        <form>
-            <label>
-            login
-            <input type="text" value={user} onChange={e => setUser(e.target.value)} />
-            </label>
+        <div className="login">
+            <h3>Login</h3>
+            <form>
+                <label>Usuário:</label>
+                <input 
+                    type="text" 
+                    value={user} 
+                    placeholder="nome de usuário" 
+                    onChange={e => setUser(e.target.value)}
+                />
+                <label>Senha:</label>
+                <input 
+                    type="text"
+                    placeholder="senha" 
+                //     value={user} 
+                //     onChange={e => setUser(e.target.value)}
+                />
 
-            <button type="submit" value="Enviar" onClick={(e) => handleSubmit(e)}>Entrar</button>
-        </form>
+                <button 
+                    type="submit"
+                    value="Enviar" 
+                    onClick={(e) => 
+                    handleSubmit(e)}>
+                    Entrar
+                </button>
+            </form>
+            <Link to="/create" className="create-user">criar usuário</Link>
+        </div>
     );    
 }
 

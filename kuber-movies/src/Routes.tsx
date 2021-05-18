@@ -4,6 +4,7 @@ import Gender from "./pages/Gender";
 import List from "./pages/List";
 import MovieDetails from "./pages/List/components/MovieDetails";
 import Login from "./pages/Login";
+import Create from "./pages/Create";
 
 const Routes = () => {
     return ( 
@@ -12,6 +13,9 @@ const Routes = () => {
             <Switch>
                 <Route exact path="/">
                     <Login />
+                </Route>
+                <Route path="/create" exact>
+                    <Create />
                 </Route>
                 <Route path="/genres" exact>
                     <Gender />
