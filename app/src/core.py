@@ -136,6 +136,17 @@ class createNode:
         query = "MATCH (f:Filme) WHERE id(f) = {} RETURN f, id(f) as id".format(movie_id)
         result = tx.run(query)
         return result.data()
+    
+    def get_user_data(self, username):
+        with self.driver.session() as session:
+            user_data = session.read_transaction(self._get_user_data, username)
+            return user_data
+
+    @staticmethod
+    def _get_user_data(tx, username):
+        query = 'MATCH (n:Pessoa) WHERE n.username = {} return n'.format(username)
+        result = tx.run(query)
+        return result.data()
 
 
 ############## front end requests ##############
@@ -200,6 +211,13 @@ def api_users():
         content = request.json
         greeter.create_user(content['name'], content['username'], content['password'])
         return 'OK', 201
+
+# GET user data
+@app.route('/user/<username>', methods=['GET'])
+@cross_origin()
+def api_user(username):
+    if request.method == 'GET':
+        return jsonify(greeter.get_user_data(username))
 
 ############## the end ##############
 
