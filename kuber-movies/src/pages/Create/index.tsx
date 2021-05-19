@@ -8,18 +8,35 @@ const Create = () => {
     const [username, setUsername] = useState('');
     const [password, setPassord] = useState('');
 
+    const [isExist, setIsExist] = useState(false);
+
     const history = useHistory();
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        api.post('/users', {
-            name: `${name}`,
-            username: `${username}`,
-            password: `${password}`
-        })
-        .then(() => {
-            history.push('/');
-        })
+
+        // api.get(`/user/${username}`)
+        // .then( res => {
+        //     const userDetails = res.data;
+        //     if (userDetails.length === 0){
+        //         alert("usuário cadastrado!")
+        //     }
+        //     else {
+        //         setIsExist(true);
+        //         alert("nome de usuário já existe!")
+        //     }
+        // })
+        if (isExist === false){
+            api.post('/users', {
+                name: `${name}`,
+                username: `${username}`,
+                password: `${password}`
+            })
+            .then(() => {
+                history.push('/');
+            })
+        }   
+
     }
     
     return (  

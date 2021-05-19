@@ -4,8 +4,9 @@ import api from '../../api';
 import './styles.scss';
 
 const Login = () => {
-    const history = useHistory()
-    const [user, setUser] = useState("")
+    const history = useHistory();
+    const [user, setUser] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleSubmit = (e: FormEvent) =>{
         e.preventDefault()
@@ -44,8 +45,8 @@ const Login = () => {
                 <input 
                     type="password"
                     placeholder="senha" 
-                //     value={user} 
-                //     onChange={e => setUser(e.target.value)}
+                    value={password}
+                     onChange={e => setPassword(e.target.value)}
                 />
 
                 <button 
