@@ -5,19 +5,21 @@ import { useEffect, useState } from 'react';
 import api from '../../../../api';
 
 interface movie_interface {
-    id: number
-    imageUrl: string
-    overview: string
-    release_date: string
-    title: string
-    vote_average: number
+    f : {
+        id: number
+        imageUrl: string
+        overview: string
+        release_date: string
+        title: string
+        vote_average: number
+    }
 }
 
 const MovieDetails = () => {
     const location = useLocation<{id: number}>();
     const id = location.state.id;
 
-    const [movie, setMovie] = useState<movie_interface>()
+    const [movie, setMovie] = useState<movie_interface[]>()
     
     useEffect(()=>{
         api.get(`/movieDetails/${id}`)
@@ -32,18 +34,18 @@ const MovieDetails = () => {
                 movie === undefined ? '' :
                     <div className="row col-6">
                         <div className="movie-details-title col-6">
-                            <h2>{movie.title}</h2>
-                            <p>Data de Laçamento : {movie.release_date} </p>
+                            <h2>{movie[0]['f']['title']}</h2>
+                            <p>Data de Laçamento : {movie[0]['f']['release_date']} </p>
                             {/* <p>Gêneros : {movie.}</p> */}
-                            <p>Avaliação: {movie.vote_average}%</p>
+                            <p>Avaliação: {movie[0]['f']['vote_average']}%</p>
                         </div>
                         <div className="movie-details-img col-6">
-                            <img src={movie.imageUrl} alt="" />
+                            <img src={movie[0]['f']['imageUrl']} alt="" />
                         </div>
                         <div className="movie-details-synopsis">
                             <h3>Sinopse</h3>
                             <p>
-                            {movie.overview}
+                            {movie[0]['f']['overview']}
                             </p>
                         </div>
                     </div>
