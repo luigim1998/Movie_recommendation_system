@@ -18,6 +18,16 @@ class createNode:
 
     def close(self):
         self.driver.close()
+    
+    def delete_duplicate(self):
+        with self.driver.session() as session:
+            create_user = session.write_transaction(self._delete_duplicate)
+            return create_user
+
+    @staticmethod
+    def _delete_duplicate(tx):
+        result = tx.run("MATCH (c:Filme) WITH c.idfilme AS filmes, COLLECT(c) AS filmes_repet WHERE SIZE(filmes_repet) > 1 UNWIND filmes_repet[1..] AS contact DETACH DELETE contact")
+        return result.data()
 
     # criar filmes
     def create_films(self, id, genre_ids, title, overview, release_date, vote_average, imageUrl):
@@ -246,6 +256,7 @@ if __name__ == "__main__":
             else:
                 continue
     
+    greeter.delete_duplicate()
     # greeter.create_user("Luigi Muller", "luigim1998", 'luluzinho')
     # greeter.create_user("Miller", "ttezo", 'Tarlisonzinho')
     # greeter.create_user("Pedro Aleph", "pedroaleph", 'password')
