@@ -61,7 +61,8 @@ class createNode:
 
     @staticmethod
     def _create_user(tx, name, username, password):
-        result = tx.run("CREATE (n:Pessoa {name: $name, username: $username, password: $password})", name=name, username=username, password=password)
+        result = tx.run('MERGE (n:Pessoa {{username: "{}" }}) ON CREATE SET n.name= "{}", n.password= "{}"'.format(username, name, password))
+        #result = tx.run("CREATE (n:Pessoa {name: $name, username: $username, password: $password})", name=name, username=username, password=password)
         return result.data()
 
     # achar filmes curtidos pelo usuario
@@ -257,7 +258,8 @@ if __name__ == "__main__":
                 continue
     
     greeter.delete_duplicate()
-    # greeter.create_user("Luigi Muller", "luigim1998", 'luluzinho')
+    greeter.create_user("Luigi Muller", "luigim1998", 'luluzinho')
+    greeter.create_user("Liigi Mylena", "luigim1998", 'luluzinho')
     # greeter.create_user("Miller", "ttezo", 'Tarlisonzinho')
     # greeter.create_user("Pedro Aleph", "pedroaleph", 'password')
     # greeter.create_user("Talirson", "magictorto", 'hatsunemiku')
