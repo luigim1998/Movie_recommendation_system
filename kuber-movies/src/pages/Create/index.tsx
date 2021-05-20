@@ -43,6 +43,7 @@ const Create = () => {
                 <label>Nome:</label>
                 <input 
                     type="text"
+                    required
                     placeholder="seu nome"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -50,6 +51,7 @@ const Create = () => {
                 <label>Nome de Usuário:</label>
                 <input 
                     type="text"
+                    required
                     placeholder="escolha um apelido"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
@@ -57,6 +59,7 @@ const Create = () => {
                 <label>Senha:</label>
                 <input 
                     type="password"
+                    required
                     placeholder="crie uma senha"
                     value={password}
                     onChange={(e) => setPassord(e.target.value)}

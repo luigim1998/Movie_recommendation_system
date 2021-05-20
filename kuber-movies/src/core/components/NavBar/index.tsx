@@ -1,7 +1,12 @@
 import './styles.scss';
 import { Link , NavLink} from 'react-router-dom';
+import { useState } from 'react';
 
 function NavBar() {
+
+    const [isLogged] = useState(true);
+    //setIsLogged(true);
+
     return (
         <nav className="row bg-primary main-nav">
         <div className="col-2">
@@ -10,18 +15,20 @@ function NavBar() {
             </Link>
         </div>
         <div className="col-6 offset-2">
-            <ul className="main-menu">
-                <li>
-                    <NavLink to="/genres">
-                        GÊNERO
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/list">
-                        LISTA
-                    </NavLink>
-                </li>
-            </ul>
+            { isLogged && 
+                <ul className="main-menu">
+                    <li>
+                        <NavLink to="/genres">
+                            GÊNERO
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/list">
+                            LISTA
+                        </NavLink>
+                    </li>
+                </ul>
+            }
         </div>
     </nav>
     );

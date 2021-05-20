@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { FormEvent, useEffect, useState } from 'react';
 import {ThumbsUp, ThumbsDown} from 'react-feather';
 
@@ -25,6 +25,7 @@ interface filme{
 }
 
 const MovieDetails = () => {
+    const history = useHistory();
     const location = useLocation<{id: number}>();
     const id = location.state.id;
 
@@ -58,7 +59,12 @@ const MovieDetails = () => {
     
     return ( 
         <div className="movie-details-container">
-            <Link to="/list" className="goback-btn-container"><button className="goback-btn bg-primary">voltar </button></Link>
+            <button 
+                className="goback-btn-container goback-btn bg-primary"
+                onClick={() => { history.goBack()}}
+                >
+                    voltar 
+            </button>
         <div className="row">
             {
                 movie === undefined ? '' :
