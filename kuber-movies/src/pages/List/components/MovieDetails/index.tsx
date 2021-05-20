@@ -61,7 +61,7 @@ const MovieDetails = () => {
         <div className="movie-details-container">
             <button 
                 className="goback-btn-container goback-btn bg-primary"
-                onClick={() => { history.goBack()}}
+                onClick={() => { history.push("/list")}}
                 >
                     voltar 
             </button>

@@ -1,58 +1,22 @@
-import React, { FormEvent, useState } from 'react';
-import { useHistory, Link } from 'react-router-dom';
-import api from '../../api';
+import React, { ReactEventHandler} from 'react';
+import { Link } from 'react-router-dom';
 import './styles.scss';
 
-const Login = () => {
-    const history = useHistory();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [isExist, setIsExist] = useState(false);
-    const [name, setName] = useState('');
-    const [isLogged, setIsLogged] = useState(false);
+type props = {
+    isLogged: boolean,
+    name: string,
+    username: string,
+    password: string,
+    setUsername: ReactEventHandler,
+    setPassword: ReactEventHandler,
+    handleSubmit: ReactEventHandler,
+    handleLeave: ReactEventHandler
+}
 
-
-    const handleSubmit = (e: FormEvent) =>{
-        e.preventDefault()
-
-        api.get(`user/${username}`)
-        .then(res => {
-            const user = res.data;
-            if (user.length !== 0){
-                setName(user[0]['name']);
-                setIsExist(true);
-            }
-            else{
-                alert('usuário inexistente!');
-            }
-        });
-
-        if (isExist === true){
-            api.get(`user/${username}/${password}`)
-            .then( res => {
-                const pass = res.data[0]['resposta'];
-                if(pass){
-                    setIsLogged(true);
-                    localStorage.setItem("user", username);
-                    history.push('/')
-                }
-                else{
-                    alert('senha incorreta!');
-                }
-            })
-        }
-    }
-
-    const handleLeave = (e: FormEvent) => {
-        e.preventDefault()
-
-        setName('');
-        setUsername('');
-        setPassword('');
-        setIsExist(false);
-        setIsLogged(false);
-    }
-
+const Login = (
+    {isLogged, name, username, password, setUsername, setPassword, handleSubmit, handleLeave}
+     :props) => {
+    
     return (
         <div className="login">
             { !isLogged && 
@@ -65,7 +29,7 @@ const Login = () => {
                             required
                             value={username} 
                             placeholder="nome de usuário" 
-                            onChange={e => setUsername(e.target.value)}
+                            onChange={setUsername}
                         />
                         <label>Senha:</label>
                         <input 
@@ -73,14 +37,14 @@ const Login = () => {
                             required
                             placeholder="senha" 
                             value={password}
-                            onChange={e => setPassword(e.target.value)}
+                            onChange={setPassword}
                         />
 
                         <button 
                             type="submit"
                             value="Enviar" 
-                            onClick={(e) => 
-                            handleSubmit(e)}>
+                            onClick={(e) => handleSubmit(e)}
+                            >
                             Entrar
                         </button>
                     </form>
@@ -89,7 +53,9 @@ const Login = () => {
             }
             { isLogged && 
                 <>
-                <h3>Bem Vindo, {name}</h3>
+                <h3>Bem Vindo, 
+                    {name}
+                </h3>
                 <p>
                     Aqui você pode : <br />
                     - ver a sua lista de filmes <br />
@@ -98,7 +64,11 @@ const Login = () => {
                     - ver as recomendações do seu filme favorito <br />
                     - adicionar filmes a sua lista de filmes buscando pelo gênero
                 </p>
-                <button onClick={handleLeave} >Sair</button>
+                <button
+                    onClick={handleLeave}
+                >
+                    Sair
+                </button>
                 </>
             }
         </div>
