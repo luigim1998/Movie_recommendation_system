@@ -15,6 +15,14 @@ const Create = () => {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
+        api.get(`/user/${username}`)
+        .then(res => {
+            if(res.data.length !== 0){
+                setIsExist(true);
+                alert('usuário já existe!')
+            }
+        })
+
         if (isExist === false){
             api.post('/users', {
                 name: `${name}`,

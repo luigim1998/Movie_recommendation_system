@@ -7,28 +7,35 @@ const Login = () => {
     const history = useHistory();
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
+    const [isExist, setIsExist] = useState(false);
 
     const handleSubmit = (e: FormEvent) =>{
         e.preventDefault()
 
-        api.get('/users')
-            .then(res => res.data)
-            .then(users => {
-                let entrou = 0;
-                for (let i = 0; i < users.length; i++){
-                    if (users[i]['username'] === user){
-                        console.log(users[i]['username'])
-                        localStorage.setItem("user", user)
-                        history.push('/list')
-                        entrou = 1
-                        break
-                    }
+        api.get(`user/${user}`)
+        .then(res => {
+            if (res.data.length !== 0){
+                setIsExist(true);
+            }
+            else{
+                alert('usuário inexistente!');
+            }
+        });
+
+        if (isExist === true){
+            api.get(`user/${user}/${password}`)
+            .then( res => {
+                const pass = res.data[0]['resposta'];
+                if(pass){
+                    localStorage.setItem("user", user)
+                    history.push('/list')
                 }
-                if (entrou === 0){
-                    alert("Usuário não cadastrado")
+                else{
+                    alert('senha incorreta!');
                 }
             })
         }
+    }
 
     return (
         <div className="login">
