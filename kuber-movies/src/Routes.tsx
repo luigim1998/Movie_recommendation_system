@@ -10,7 +10,6 @@ import api from "./api";
 import SearchMovie from './pages/Search';
 
 const Routes = () => {
-    //const history = useHistory();
     const [isLogged, setIsLogged] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -40,14 +39,13 @@ const Routes = () => {
             }
         })
         .then( () => {
-            if (isExist === true){
+            if (isExist){
                 api.get(`user/${username}/${password}`)
                 .then( res => {
                     const pass = res.data[0]['resposta'];
                     if(pass){
                         setIsLogged(true);
                         localStorage.setItem("user", username);
-                        //history.push('/')
                     }
                     else{
                         alert('senha incorreta!');
@@ -71,7 +69,7 @@ const Routes = () => {
 
     return ( 
         <BrowserRouter>
-            <NavBar />
+            <NavBar isLogged={isLogged}/>
             <Switch>
                 <Route exact path="/">
                     <Login
@@ -85,20 +83,20 @@ const Routes = () => {
                         handleLeave={handleLeave}
                     />
                 </Route>
-                <Route path="/create" exact>
+                <Route exact path="/create">
                     <Create />
                 </Route>
-                <Route path="/genres" exact>
-                    <Gender />
+                <Route exact path="/genres">
+                    <Gender isLogged={isLogged}/>
                 </Route>
-                <Route path="/list" exact>
-                    <List />
+                <Route exact path="/list">
+                    <List isLogged={isLogged}/>
                 </Route>
-                <Route path="/search" exact>
-                    <SearchMovie />
+                <Route exact path="/search">
+                    <SearchMovie isLogged={isLogged}/>
                 </Route>
-                <Route path="/movie">
-                        <MovieDetails />
+                <Route exact path="/movie">
+                        <MovieDetails isLogged={isLogged}/>
                 </Route>
             </Switch>
         </BrowserRouter>

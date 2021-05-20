@@ -205,7 +205,7 @@ class createNode:
     @staticmethod
     def _get_film_by_name(tx, movie_name):
         aux = ".*(?i){}.*".format(str(movie_name))
-        query = "MATCH (n: Filme) WHERE n.title =~ \"{}\" return n".format(aux)
+        query = "MATCH (n: Filme) WHERE n.title =~ \"{}\" return n, id(n) as id".format(aux)
         result = tx.run(query)
         return result.data()
 

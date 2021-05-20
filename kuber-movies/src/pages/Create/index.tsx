@@ -23,7 +23,7 @@ const Create = () => {
             }
         })
         .then(() => {
-            if (isExist === false){
+            if (!isExist){
                 api.post('/users', {
                     name: `${name}`,
                     username: `${username}`,
