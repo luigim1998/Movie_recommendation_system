@@ -74,7 +74,7 @@ class createNode:
     
     @staticmethod
     def _verify_user_exist(tx, username):
-        query = 'MATCH (p:Pessoa {{username: "{}"}}) RETURN p.username'.format(username)
+        query = 'MATCH (p:Pessoa {{username: "{}"}}) RETURN p.name as name, p.username as username'.format(username)
         result = tx.run(query)
         return result.data()
     
@@ -174,16 +174,16 @@ class createNode:
         result = tx.run(query)
         return result.data()
     
-    def get_user_data(self, username):
-        with self.driver.session() as session:
-            user_data = session.read_transaction(self._get_user_data, username)
-            return user_data
+    # def get_user_data(self, username):
+    #     with self.driver.session() as session:
+    #         user_data = session.read_transaction(self._get_user_data, username)
+    #         return user_data
 
-    @staticmethod
-    def _get_user_data(tx, username):
-        query = 'MATCH (n:Pessoa) WHERE n.username = "{}" return n.name as name, n.username as username, n.password as password, id(n) as id'.format(username)
-        result = tx.run(query)
-        return result.data()
+    # @staticmethod
+    # def _get_user_data(tx, username):
+    #     query = 'MATCH (n:Pessoa) WHERE n.username = "{}" return n.name as name, n.username as username, n.password as password, id(n) as id'.format(username)
+    #     result = tx.run(query)
+    #     return result.data()
     
     # verifica se o usuário já curtiu esse filme
     def verify_user_liked(self, username, movie_id):
@@ -261,12 +261,19 @@ def api_users():
         greeter.create_user(content['name'], content['username'], content['password'])
         return 'OK', 201
 
-# GET user data
+# GET user exist
 @app.route('/user/<username>', methods=['GET'])
 @cross_origin()
 def api_user(username):
     if request.method == 'GET':
-        return jsonify(greeter.get_user_data(username))
+        return jsonify(greeter.verify_user_exist(username))
+
+# GET user exist
+@app.route('/user/<username>/<password>', methods=['GET'])
+@cross_origin()
+def api_user_password(username, password):
+    if request.method == 'GET':
+        return jsonify(greeter.verify_password(username, password))
 
 ############## the end ##############
 
@@ -296,12 +303,12 @@ if __name__ == "__main__":
                 continue
     
     # greeter.delete_duplicate()
-    greeter.create_user("Luigi Muller", "luigim1998", 'luluzinho')
-    greeter.create_user("Liigi Mylena", "luigim1998", 'luluzinho')
-    print("Verifica luigim1998", greeter.verify_user_exist("luigim1998"))
-    print("Verifica ttzeo", greeter.verify_user_exist("ttzeo"))
-    print("Verifica senha: luigim1998, luluzinho", greeter.verify_password("luigim1998", "luluzinho"))
-    print("Verifica senha: luigim1998, lulu", greeter.verify_password("luigim1998", "lulu"))
+    # greeter.create_user("Luigi Muller", "luigim1998", 'luluzinho')
+    # greeter.create_user("Liigi Mylena", "luigim1998", 'luluzinho')
+    # print("Verifica luigim1998", greeter.verify_user_exist("luigim1998"))
+    # print("Verifica ttzeo", greeter.verify_user_exist("ttzeo"))
+    # print("Verifica senha: luigim1998, luluzinho", greeter.verify_password("luigim1998", "luluzinho"))
+    # print("Verifica senha: luigim1998, lulu", greeter.verify_password("luigim1998", "lulu"))
     # greeter.create_user("Miller", "ttezo", 'Tarlisonzinho')
     # greeter.create_user("Pedro Aleph", "pedroaleph", 'password')
     # greeter.create_user("Talirson", "magictorto", 'hatsunemiku')
@@ -312,9 +319,9 @@ if __name__ == "__main__":
     # greeter.create_user("Ewelly", "ewelly", 'ewelly')
     # greeter.create_user("Josemar", "jukka", 'rodrigo')
     
-    greeter.like_movie("luigim1998", 10)
-    print("luigim1998 gostou de filme 10", greeter.verify_user_liked("luigim1998", 11))
-    print("luigim1998 gostou de filme 11", greeter.verify_user_liked("luigim1998", 10))
+    # greeter.like_movie("luigim1998", 10)
+    # print("luigim1998 gostou de filme 10", greeter.verify_user_liked("luigim1998", 11))
+    # print("luigim1998 gostou de filme 11", greeter.verify_user_liked("luigim1998", 10))
 
     # greeter.like_movie("pedroaleph", 3)
     # greeter.like_movie("pedroaleph", 25)
