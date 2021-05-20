@@ -37,7 +37,8 @@ class createNode:
 
     @staticmethod
     def _create_and_return_greeting(tx, id, genre_ids, title, overview, release_date, vote_average, backdrop_path):
-        result = tx.run("CREATE (n:Filme {id_filme: $id, genre_ids: $genre_ids, title: $title, overview: $overview, release_date: $release_date, vote_average: $vote_average, imageUrl: $backdrop_path })", id=id, genre_ids=genre_ids, title=title, overview=overview, release_date=release_date, vote_average=vote_average, backdrop_path=backdrop_path)
+        result = tx.run("MERGE (n:Filme {id_filme: $id}) ON CREATE SET n.genre_ids= $genre_ids, n.title= $title, n.overview= $overview, n.release_date= $release_date, n.vote_average= $vote_average, n.imageUrl= $backdrop_path ", id=id, genre_ids=genre_ids, title=title, overview=overview, release_date=release_date, vote_average=vote_average, backdrop_path=backdrop_path)
+        # result = tx.run("CREATE (n:Filme {id_filme: $id, genre_ids: $genre_ids, title: $title, overview: $overview, release_date: $release_date, vote_average: $vote_average, imageUrl: $backdrop_path })", id=id, genre_ids=genre_ids, title=title, overview=overview, release_date=release_date, vote_average=vote_average, backdrop_path=backdrop_path)
         return result.data()
 
     # acha os filmes de um determinado gênero (através do id do gênero)
@@ -77,6 +78,7 @@ class createNode:
         result = tx.run(query)
         return result.data()
     
+    # verifica se é a senha do usuário
     def verify_password(self, username, password):
         with self.driver.session() as session:
             verify = session.read_transaction(self._verify_password, username, password)
@@ -85,6 +87,8 @@ class createNode:
     @staticmethod
     def _verify_password(tx, username, password):
         query = 'MATCH (p:Pessoa {{username: "{}"}}) RETURN p.password="{}" as resposta'.format(username, password)
+        result = tx.run(query)
+        return result.data()
 
     
     # achar filmes curtidos pelo usuario
@@ -181,14 +185,15 @@ class createNode:
         result = tx.run(query)
         return result.data()
     
+    # verifica se o usuário já curtiu esse filme
     def verify_user_liked(self, username, movie_id):
         with self.driver.session() as session:
-            exists = session.read_transaction(self.verify_user_liked, username, movie_id)
+            exists = session.read_transaction(self._verify_user_liked, username, movie_id)
             return exists
     
     @staticmethod
     def _verify_user_liked(tx, username, movie_id):
-        query = 'MATCH (p:Pessoa {{username: "{}"}}), (f:Filme) WHERE id(f)={} RETURN exists((m)<-[:ACTED_IN]-(p))'.format(username, movie_id)
+        query = 'MATCH (p:Pessoa {{username: "{}"}}), (f:Filme) WHERE id(f)={} RETURN exists((f)<-[:CURTIU]-(p))'.format(username, movie_id)
         result = tx.run(query)
         return result.data()
 
@@ -290,7 +295,7 @@ if __name__ == "__main__":
             else:
                 continue
     
-    greeter.delete_duplicate()
+    # greeter.delete_duplicate()
     greeter.create_user("Luigi Muller", "luigim1998", 'luluzinho')
     greeter.create_user("Liigi Mylena", "luigim1998", 'luluzinho')
     print("Verifica luigim1998", greeter.verify_user_exist("luigim1998"))
@@ -307,7 +312,10 @@ if __name__ == "__main__":
     # greeter.create_user("Ewelly", "ewelly", 'ewelly')
     # greeter.create_user("Josemar", "jukka", 'rodrigo')
     
-    # greeter.like_movie("pedroaleph", 1)
+    greeter.like_movie("luigim1998", 10)
+    print("luigim1998 gostou de filme 10", greeter.verify_user_liked("luigim1998", 11))
+    print("luigim1998 gostou de filme 11", greeter.verify_user_liked("luigim1998", 10))
+
     # greeter.like_movie("pedroaleph", 3)
     # greeter.like_movie("pedroaleph", 25)
     # greeter.like_movie("rocha", 25)
