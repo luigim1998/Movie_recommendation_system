@@ -14,7 +14,6 @@ const List = () => {
     const [filmes, setFilmes] = useState<movie[]>()
 
     useEffect(() => {
-        
         api.get(`/moviesRecommended/${user}`)
             .then(res => setFilmes(res.data))
     },[user])

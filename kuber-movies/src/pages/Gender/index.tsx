@@ -39,12 +39,6 @@ const Gender = () => {
                         }  
                     )
                 }
-                {/* <MovieCard />
-                <MovieCard />
-                <MovieCard />
-                <MovieCard />
-                <MovieCard />
-                <MovieCard /> */}
             </div>
         </div>
     );

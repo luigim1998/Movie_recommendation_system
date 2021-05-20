@@ -5,7 +5,7 @@ function NavBar() {
     return (
         <nav className="row bg-primary main-nav">
         <div className="col-2">
-            <Link to="/" className="nav-logo-txt">
+            <Link to="/list" className="nav-logo-txt">
                 <h3>KuberMovies</h3>
             </Link>
         </div>
