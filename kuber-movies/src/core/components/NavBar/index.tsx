@@ -1,16 +1,16 @@
 import './styles.scss';
 import { Link , NavLink} from 'react-router-dom';
-import { useState } from 'react';
 
-function NavBar() {
+type props = {
+    isLogged: boolean
+}
 
-    const [isLogged] = useState(true);
-    //setIsLogged(true);
+function NavBar({isLogged} : props) {
 
     return (
         <nav className="row bg-primary main-nav">
         <div className="col-2">
-            <Link to="/list" className="nav-logo-txt">
+            <Link to="/" className="nav-logo-txt">
                 <h3>KuberMovies</h3>
             </Link>
         </div>

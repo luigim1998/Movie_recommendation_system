@@ -22,18 +22,18 @@ const Create = () => {
                 alert('usuário já existe!')
             }
         })
-
-        if (isExist === false){
-            api.post('/users', {
-                name: `${name}`,
-                username: `${username}`,
-                password: `${password}`
-            })
-            .then(() => {
-                history.push('/');
-            })
-        }   
-
+        .then(() => {
+            if (!isExist){
+                api.post('/users', {
+                    name: `${name}`,
+                    username: `${username}`,
+                    password: `${password}`
+                })
+                .then(() => {
+                    history.push('/');
+                })
+            } 
+        })
     }
     
     return (  

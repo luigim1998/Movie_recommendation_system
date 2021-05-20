@@ -3,13 +3,17 @@ import api from '../../api';
 import MovieCard from '../../core/components/MovieCard';
 import './styles.scss';
 
+type props = {
+    isLogged: boolean
+}
+
 interface movie{
     id: number,
     imageUrl: string,
     title: string
 }
 
-const Gender = () => {
+const Gender = ({isLogged} : props) => {
     const [genero, setGenero] = useState(0);
     const [filmes, setFilmes] = useState<movie[]>()
 
@@ -19,28 +23,33 @@ const Gender = () => {
     },[genero])
 
     return (
-        <div className="gender-container">
-            <h4>Escolha seu Gênero:</h4>
-            <div className="gender-btn-content">
-                <button className="gender-btn" onClick={e =>{e.preventDefault(); setGenero(28)}}>Ação</button>
-                <button className="gender-btn" onClick={e =>{e.preventDefault(); setGenero(12)}}>Aventura</button>
-                <button className="gender-btn" onClick={e =>{e.preventDefault(); setGenero(878)}}>Ficção Cientifica</button>
-                <button className="gender-btn" onClick={e =>{e.preventDefault(); setGenero(53)}}>Suspense</button>
-                <button className="gender-btn" onClick={e =>{e.preventDefault(); setGenero(27)}}>Terror</button>
-            </div>
-            <h4 className="gender-movie-title">Filmes do Gênero:</h4>
-            <div className="gender-movie">
-                {
-                    filmes === undefined ? '':
-                        filmes.map( filme =>{
-                            return(
-                                <MovieCard key={filme.id} id={filme.id} imagem={filme.imageUrl}/>
-                            )  
-                        }  
-                    )
-                }
-            </div>
-        </div>
+        <>
+            {!isLogged && <h3>Faça login para acessar esta página</h3>}
+            { isLogged &&
+                <div className="gender-container">
+                    <h4>Escolha seu Gênero:</h4>
+                    <div className="gender-btn-content">
+                        <button className="gender-btn" onClick={e =>{e.preventDefault(); setGenero(28)}}>Ação</button>
+                        <button className="gender-btn" onClick={e =>{e.preventDefault(); setGenero(12)}}>Aventura</button>
+                        <button className="gender-btn" onClick={e =>{e.preventDefault(); setGenero(878)}}>Ficção Cientifica</button>
+                        <button className="gender-btn" onClick={e =>{e.preventDefault(); setGenero(53)}}>Suspense</button>
+                        <button className="gender-btn" onClick={e =>{e.preventDefault(); setGenero(27)}}>Terror</button>
+                    </div>
+                    <h4 className="gender-movie-title">Filmes do Gênero:</h4>
+                    <div className="gender-movie">
+                        {
+                            filmes === undefined ? '':
+                                filmes.map( filme =>{
+                                    return(
+                                        <MovieCard key={filme.id} id={filme.id} imagem={filme.imageUrl}/>
+                                    )  
+                                }  
+                            )
+                        }
+                    </div>
+                </div>
+            }
+        </>
     );
 }
  

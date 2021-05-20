@@ -6,6 +6,9 @@ import api from '../../../../api';
 import MovieCard from '../../../../core/components/MovieCard';
 import './styles.scss';
 
+type props = {
+    isLogged: boolean
+}
 
 interface movie_interface {
     f : {
@@ -24,7 +27,7 @@ interface filme{
     title: string
 }
 
-const MovieDetails = () => {
+const MovieDetails = ({isLogged}: props) => {
     const history = useHistory();
     const location = useLocation<{id: number}>();
     const id = location.state.id;
@@ -58,55 +61,60 @@ const MovieDetails = () => {
     },[id])
     
     return ( 
-        <div className="movie-details-container">
-            <button 
-                className="goback-btn-container goback-btn bg-primary"
-                onClick={() => { history.goBack()}}
-                >
-                    voltar 
-            </button>
-        <div className="row">
-            {
-                movie === undefined ? '' :
-                    <div className="row col-6">
-                        <div className="movie-details-title col-6">
-                            <h2>{movie[0]['f']['title']}</h2>
-                            <p>Data de Laçamento : {movie[0]['f']['release_date']} </p>
-                            {/* <p>Gêneros : {movie.}</p> */}
-                            <p>Avaliação: {movie[0]['f']['vote_average']}%</p>
-                        </div>
-
-                        <div className="movie-details-img col-6">
-                            <img src={movie[0]['f']['imageUrl']} alt="" />
-                        </div>
-                        <div className="movie-details-synopsis">
-                            <h3>Sinopse</h3>
-                            <p>
-                            {movie[0]['f']['overview']}
-                            </p>
-                        </div>
-
-                        <div className="like">
-                            <ThumbsUp color="white" size={24} onClick={e => handleLike(e)}/>
-                            <ThumbsDown color="white" size={24} onClick={e => handleDislike(e)}/>
+        <>
+            {!isLogged && <h3>Faça login para acessar esta página</h3>}
+            { isLogged &&
+                <div className="movie-details-container">
+                    <button 
+                        className="goback-btn-container goback-btn bg-primary"
+                        onClick={() => { history.push("/list")}}
+                        >
+                            voltar 
+                    </button>
+                    <div className="row">
+                        {
+                            movie === undefined ? '' :
+                                <div className="row col-6">
+                                    <div className="movie-details-title col-6">
+                                        <h2>{movie[0]['f']['title']}</h2>
+                                        <p>Data de Laçamento : {movie[0]['f']['release_date']} </p>
+                                        {/* <p>Gêneros : {movie.}</p> */}
+                                        <p>Avaliação: {movie[0]['f']['vote_average']}%</p>
+                                    </div>
+            
+                                    <div className="movie-details-img col-6">
+                                        <img src={movie[0]['f']['imageUrl']} alt="" />
+                                    </div>
+                                    <div className="movie-details-synopsis">
+                                        <h3>Sinopse</h3>
+                                        <p>
+                                        {movie[0]['f']['overview']}
+                                        </p>
+                                    </div>
+            
+                                    <div className="like">
+                                        <ThumbsUp color="white" size={24} onClick={e => handleLike(e)}/>
+                                        <ThumbsDown color="white" size={24} onClick={e => handleDislike(e)}/>
+                                    </div>
+                                </div>
+                        }
+                        <div className="col-6">
+                            <h4>Recomendações: </h4>
+                            <div className="recommedation-card-movie">
+                                {
+                                    recomendados === undefined ? '' :
+                                        recomendados.map(rec => {
+                                            return(
+                                                <MovieCard key={id} id={id} imagem={rec.imageUrl}/>
+                                            )
+                                        })
+                                }
+                            </div>
                         </div>
                     </div>
-            }
-            <div className="col-6">
-                <h4>Recomendações: </h4>
-                <div className="recommedation-card-movie">
-                    {
-                        recomendados === undefined ? '' :
-                            recomendados.map(rec => {
-                                return(
-                                    <MovieCard key={id} id={id} imagem={rec.imageUrl}/>
-                                )
-                            })
-                    }
                 </div>
-            </div>
-        </div>
-        </div>
+            }
+        </>
     );
 }
  
