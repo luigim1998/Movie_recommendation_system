@@ -27,6 +27,11 @@ function NavBar() {
                             LISTA
                         </NavLink>
                     </li>
+                    <li>
+                        <NavLink to="/search">
+                            BUSCA
+                        </NavLink>
+                    </li>
                 </ul>
             }
         </div>

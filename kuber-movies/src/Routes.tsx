@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Create from "./pages/Create";
 import React, { FormEvent, useState } from "react";
 import api from "./api";
+import SearchMovie from './pages/Search';
 
 const Routes = () => {
     //const history = useHistory();
@@ -92,6 +93,9 @@ const Routes = () => {
                 </Route>
                 <Route path="/list" exact>
                     <List />
+                </Route>
+                <Route path="/search" exact>
+                    <SearchMovie />
                 </Route>
                 <Route path="/movie">
                         <MovieDetails />
