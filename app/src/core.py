@@ -197,6 +197,18 @@ class createNode:
         result = tx.run(query)
         return result.data()
 
+    def get_film_by_name(self, movie_name):
+        with self.driver.session() as session:
+            movies = session.read_transaction(self._get_film_by_name , movie_name)
+            return movies
+    
+    @staticmethod
+    def _get_film_by_name(tx, movie_name):
+        aux = ".*(?i){}.*".format(str(movie_name))
+        query = "MATCH (n: Filme) WHERE n.title =~ \"{}\" return n".format(aux)
+        result = tx.run(query)
+        return result.data()
+
 
 ############## front end requests ##############
 
@@ -207,8 +219,14 @@ def api_genre_id(genre_id):
     if request.method == 'GET':
         return jsonify(greeter.find_popular_genre(genre_id))
 
+@app.route("/search/<movie_name>", methods=['GET'])
+@cross_origin()
+def api_search_movie_by_name(movie_name):
+    if request.method == 'GET':
+        return jsonify(greeter.get_film_by_name(movie_name))
+
 # GET movie by user
-@app.route('/movies/<username>', methods=['GET'])
+@app.route("/movies/<username>", methods=['GET'])
 @cross_origin()
 def api_user_like_movie(username):
     if request.method == 'GET':
