@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import {Search} from 'react-feather'
 import api from '../../api';
 import MovieCard from '../../core/components/MovieCard';
@@ -37,17 +37,17 @@ const SearchMovie: React.FC = () => {
             onChange={e => setEntrada(e.target.value)}
         />
         <Search onClick={e => {handleClick(e)}}/>
-
       </div>
 
       <div className="movie-list">
       {
-          movies === undefined ? '' :
-              movies.map(movie => {
-                  return(
-                      <MovieCard key={movie.n.id} id={movie.n.id} imagem={movie.n.imageUrl}/>
-                  )
-              }) 
+        movies === undefined ? '' :
+            movies.map(movie => {
+              console.log(movie.n.id);
+                return(
+                    <MovieCard key={movie.n.id} id={movie.n.id} imagem={movie.n.imageUrl}/>
+                )
+            }) 
       }
       </div>
     </div>
