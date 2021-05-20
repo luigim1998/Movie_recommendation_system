@@ -1,8 +1,11 @@
-import './styles.scss';
-//import MovieCard from '../../../../core/components/MovieCard';
 import { Link, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
+import {ThumbsUp, ThumbsDown} from 'react-feather';
+
 import api from '../../../../api';
+import MovieCard from '../../../../core/components/MovieCard';
+import './styles.scss';
+
 
 interface movie_interface {
     f : {
@@ -15,15 +18,42 @@ interface movie_interface {
     }
 }
 
+interface filme{
+    id: number,
+    imageUrl: string,
+    title: string
+}
+
 const MovieDetails = () => {
     const location = useLocation<{id: number}>();
     const id = location.state.id;
 
     const [movie, setMovie] = useState<movie_interface[]>()
+    const [recomendados, setRecomendados] = useState<filme[]>()
+
+    const handleLike = (e: FormEvent) => {
+        e.preventDefault()
+
+        api.post(`/likeMovie/${localStorage.getItem('user')}/${id}`)
+            .then(res => console.log(res.data))
+        alert(`Filme adicionado a sua lista`)
+    }
+
+    const handleDislike = (e: FormEvent) => {
+        e.preventDefault()
+
+        api.delete(`/likeMovie/${localStorage.getItem('user')}/${id}`)
+            .then(res => console.log(res.data))
+        alert(`Filme removido da sua lista`)
+    }
+
     
     useEffect(()=>{
         api.get(`/movieDetails/${id}`)
-        .then(res => {setMovie(res.data); console.log(res.data)})
+        .then(res => {setMovie(res.data); console.log(res.data)});
+
+        api.get(`/moviesByMovie/${id}`)
+            .then(res => {setRecomendados(res.data); console.log(res.data)})
     },[id])
     
     return ( 
@@ -39,6 +69,7 @@ const MovieDetails = () => {
                             {/* <p>Gêneros : {movie.}</p> */}
                             <p>Avaliação: {movie[0]['f']['vote_average']}%</p>
                         </div>
+
                         <div className="movie-details-img col-6">
                             <img src={movie[0]['f']['imageUrl']} alt="" />
                         </div>
@@ -48,14 +79,24 @@ const MovieDetails = () => {
                             {movie[0]['f']['overview']}
                             </p>
                         </div>
+
+                        <div className="like">
+                            <ThumbsUp color="white" size={24} onClick={e => handleLike(e)}/>
+                            <ThumbsDown color="white" size={24} onClick={e => handleDislike(e)}/>
+                        </div>
                     </div>
             }
             <div className="col-6">
                 <h4>Recomendações: </h4>
                 <div className="recommedation-card-movie">
-                    <img src="https://www.themoviedb.org/t/p/w220_and_h330_face/klAIFewuqcyEmH1SMtR2XbMyqzM.jpg" alt="" />
-                    <img src="https://www.themoviedb.org/t/p/w220_and_h330_face/klAIFewuqcyEmH1SMtR2XbMyqzM.jpg" alt="" />
-                    <img src="https://www.themoviedb.org/t/p/w220_and_h330_face/klAIFewuqcyEmH1SMtR2XbMyqzM.jpg" alt="" />
+                    {
+                        recomendados === undefined ? '' :
+                            recomendados.map(rec => {
+                                return(
+                                    <MovieCard key={id} id={id} imagem={rec.imageUrl}/>
+                                )
+                            })
+                    }
                 </div>
             </div>
         </div>
