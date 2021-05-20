@@ -65,6 +65,28 @@ class createNode:
         #result = tx.run("CREATE (n:Pessoa {name: $name, username: $username, password: $password})", name=name, username=username, password=password)
         return result.data()
 
+    # verifica se o usuário existe
+    def verify_user_exist(self, username):
+        with self.driver.session() as session:
+            user_exists = session.read_transaction(self._verify_user_exist, username)
+            return user_exists
+    
+    @staticmethod
+    def _verify_user_exist(tx, username):
+        query = 'MATCH (p:Pessoa {{username: "{}"}}) RETURN p.username'.format(username)
+        result = tx.run(query)
+        return result.data()
+    
+    def verify_password(self, username, password):
+        with self.driver.session() as session:
+            verify = session.read_transaction(self._verify_password, username, password)
+            return verify
+    
+    @staticmethod
+    def _verify_password(tx, username, password):
+        query = 'MATCH (p:Pessoa {{username: "{}"}}) RETURN p.password="{}" as resposta'.format(username, password)
+
+    
     # achar filmes curtidos pelo usuario
     def find_by_user(self, username):
         with self.driver.session() as session:
@@ -155,7 +177,18 @@ class createNode:
 
     @staticmethod
     def _get_user_data(tx, username):
-        query = 'MATCH (n:Pessoa) WHERE n.username = {} return n'.format(username)
+        query = 'MATCH (n:Pessoa) WHERE n.username = "{}" return n.name as name, n.username as username, n.password as password, id(n) as id'.format(username)
+        result = tx.run(query)
+        return result.data()
+    
+    def verify_user_liked(self, username, movie_id):
+        with self.driver.session() as session:
+            exists = session.read_transaction(self.verify_user_liked, username, movie_id)
+            return exists
+    
+    @staticmethod
+    def _verify_user_liked(tx, username, movie_id):
+        query = 'MATCH (p:Pessoa {{username: "{}"}}), (f:Filme) WHERE id(f)={} RETURN exists((m)<-[:ACTED_IN]-(p))'.format(username, movie_id)
         result = tx.run(query)
         return result.data()
 
@@ -260,6 +293,10 @@ if __name__ == "__main__":
     greeter.delete_duplicate()
     greeter.create_user("Luigi Muller", "luigim1998", 'luluzinho')
     greeter.create_user("Liigi Mylena", "luigim1998", 'luluzinho')
+    print("Verifica luigim1998", greeter.verify_user_exist("luigim1998"))
+    print("Verifica ttzeo", greeter.verify_user_exist("ttzeo"))
+    print("Verifica senha: luigim1998, luluzinho", greeter.verify_password("luigim1998", "luluzinho"))
+    print("Verifica senha: luigim1998, lulu", greeter.verify_password("luigim1998", "lulu"))
     # greeter.create_user("Miller", "ttezo", 'Tarlisonzinho')
     # greeter.create_user("Pedro Aleph", "pedroaleph", 'password')
     # greeter.create_user("Talirson", "magictorto", 'hatsunemiku')
